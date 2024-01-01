@@ -17,7 +17,7 @@
 // Include Statements
 #include <Adafruit_GFX_Buffer.h>  // https://github.com/vjmuzik/Adafruit_GFX_Buffer.git
 #include <Adafruit_ST7735.h>
-#include <Adafruit_GFX.h>
+#include <Adafruit_GFX.h>     // One character at size 1 = 6 * 8 pixels
 #include <Encoder.h>
 #include "SystemBitmaps.h"
 
@@ -31,10 +31,13 @@
 
 // GUItool: begin automatically generated code
 AudioInputI2S            i2s1;           //xy=201.1999969482422,813.1999969482422
-AudioOutputI2S           i2s2;           //xy=461.2000045776367,815.2000255584717
+AudioAnalyzeNoteFrequency notefreq1;      //xy=460.2000274658203,810.2000231742859
+AudioOutputI2S           i2s2;           //xy=460.20002365112305,912.200023651123
 AudioConnection          patchCord1(i2s1, 1, i2s2, 1);
+AudioConnection          patchCord2(i2s1, 1, notefreq1, 0);
 AudioControlSGTL5000     sgtl5000_1;     //xy=128.1999969482422,951.1999969482422
 // GUItool: end automatically generated code
+
 
 
 
@@ -80,11 +83,14 @@ void setup() {
   display.invertDisplay(true);
 
   // Audio
-  AudioMemory(20);
+  AudioMemory(50);
   
   sgtl5000_1.enable();
   sgtl5000_1.inputSelect(AUDIO_INPUT_LINEIN);
   sgtl5000_1.volume(1);
+
+  notefreq1.begin(0.15);
+
   AudioInterrupts();
 
   page0_setup();

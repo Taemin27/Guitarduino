@@ -102,6 +102,19 @@ const unsigned char tunerHome [] PROGMEM = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
 
+float frequencies[60] = {16.35, 17.32, 18.35, 19.45, 20.60, 21.83, 23.12, 24.50, 25.96, 27.50, 29.14, 30.87,
+                       32.70, 34.65, 36.71, 38.89, 41.20, 43.65, 46.25, 49.00, 51.91, 55.00, 58.27, 61.74,
+                       65.41, 69.30, 73.42, 77.78, 82.41, 87.31, 92.50, 98.00, 103.83, 110.00, 116.54, 123.47,
+                       130.81, 138.59, 146.83, 155.56, 164.81, 174.61, 185.00, 196.00, 207.65, 220.00, 233.08, 246.94,
+                       261.63, 277.18, 293.66, 311.13, 329.63, 349.23, 369.99, 392.00, 415.30, 440.00, 466.16, 493.88};
+
+String noteNames[60] = {"C0", "C#0", "D0", "D#0", "E0", "F0", "F#0", "G0", "G#0", "A0", "A#0", "B0",
+                      "C1", "C#1", "D1", "D#1", "E1", "F1", "F#1", "G1", "G#1", "A1", "A#1", "B1", 
+                      "C2", "C#2", "D2", "D#2", "E2", "F2", "F#2", "G2", "G#2", "A2", "A#2", "B2",
+                      "C3", "C#3", "D3", "D#3", "E3", "F3", "F#3", "G3", "G#3", "A3", "A#3", "B3",
+                      "C4", "C#4", "D4", "D#4", "E4", "F4", "F#4", "G4", "G#4", "A4", "A#4", "B4"};
+
+
 void tuner_setup() {
   display.fillScreen(BLACK);
   display.drawBitmap(0, 0, tunerHome, 160, 80, WHITE);
@@ -110,6 +123,71 @@ void tuner_setup() {
 }
 
 void tuner_loop() {
+  // In and out toggle
+  if(digitalRead(1) == LOW) {
+    if(menuLevel == 0) {
+      menuLevel = 1;
+      display.fillScreen(BLACK);
+      display.display();
+    }
+    else if(menuLevel == 1) {
+      menuLevel = 0;
+      tuner_setup();
+    }
+    delay(300);
+  }
 
+  if(menuLevel == 1 && notefreq1.available()) {
+    float freq = notefreq1.read();
+
+    // Find closest note
+    int matchIndex = 0;
+    float smallestDiff = 9999;
+    for(int i = 0; i < 60; i++) {
+      float diff = abs(frequencies[i] - freq);
+      if(diff < smallestDiff) {
+        smallestDiff = diff;
+        matchIndex = i;
+      }
+    }
+    
+    // Calculate difference in cents
+    int diffCent = round(1200 * log2(freq / frequencies[matchIndex]));
+    
+    // Print frequency
+    display.setTextColor(WHITE, BLACK);
+    display.setTextSize(1);
+    display.setCursor(0, 0);
+    display.print(String(freq) + " Hz ");
+    
+    // Draw bars
+    display.fillRect(0, 43, 160, 24, BLACK);
+    display.drawRect(80, 40, 2, 30, WHITE);
+    display.drawFastVLine(90, 50, 10, WHITE);
+    display.drawFastVLine(70, 50, 10, WHITE);
+    display.drawRect(79 + diffCent, 43, 4, 24, BLUE);
+
+    // Print note name
+    display.setTextSize(3);
+    display.setCursor(65, 11);
+    if(-10 < diffCent && diffCent < 10) {
+      display.setTextColor(GREEN, BLACK);
+    }
+    display.print(noteNames[matchIndex] + " ");
+
+    // Print cents
+    display.setTextSize(1);
+    if(noteNames[matchIndex].length() == 2) {
+      display.setCursor(102, 25);
+    } 
+    else {
+      display.setCursor(120, 25);
+    }
+    if(diffCent > 0) {
+      display.print("+");
+    }
+    display.print(String(diffCent) + "    ");
+
+    display.display();
+  }
 }
-
