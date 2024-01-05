@@ -21,7 +21,6 @@
 #include <Encoder.h>
 #include "SystemBitmaps.h"
 
-
 // Audio 
 #include <Audio.h>
 #include <Wire.h>
@@ -30,15 +29,23 @@
 #include <SerialFlash.h>
 
 // GUItool: begin automatically generated code
-AudioInputI2S            i2s1;           //xy=201.1999969482422,813.1999969482422
-AudioAnalyzeNoteFrequency notefreq1;      //xy=460.2000274658203,810.2000231742859
-AudioOutputI2S           i2s2;           //xy=460.20002365112305,912.200023651123
-AudioConnection          patchCord1(i2s1, 1, i2s2, 1);
-AudioConnection          patchCord2(i2s1, 1, notefreq1, 0);
-AudioControlSGTL5000     sgtl5000_1;     //xy=128.1999969482422,951.1999969482422
+AudioInputI2S            i2s1;           //xy=145.1999969482422,804.200023651123
+AudioAmplifier           notefreqAmp;           //xy=154.20000076293945,701.2000226974487
+AudioAnalyzeNoteFrequency notefreq1;      //xy=310.20003509521484,703.200023651123
+AudioEffectFreeverb      freeverb1;      //xy=372.2000045776367,906.4000091552734
+AudioMixer4              reverbMixer;         //xy=577.200065612793,882.2000255584717
+AudioMixer4              reverbOnOffMixer;         //xy=764.2000350952148,848.200023651123
+AudioOutputI2S           i2s2;           //xy=996.2003479003906,841.2000246047974
+AudioConnection          patchCord1(i2s1, 1, notefreqAmp, 0);
+AudioConnection          patchCord2(i2s1, 1, reverbMixer, 0);
+AudioConnection          patchCord3(i2s1, 1, reverbOnOffMixer, 0);
+AudioConnection          patchCord4(i2s1, 1, freeverb1, 0);
+AudioConnection          patchCord5(notefreqAmp, notefreq1);
+AudioConnection          patchCord6(freeverb1, 0, reverbMixer, 1);
+AudioConnection          patchCord7(reverbMixer, 0, reverbOnOffMixer, 1);
+AudioConnection          patchCord8(reverbOnOffMixer, 0, i2s2, 1);
+AudioControlSGTL5000     sgtl5000_1;     //xy=205.1999969482422,578.2000217437744
 // GUItool: end automatically generated code
-
-
 
 
 
@@ -54,6 +61,7 @@ Adafruit_GFX_Buffer<Adafruit_ST7735> display = Adafruit_GFX_Buffer<Adafruit_ST77
 
 const uint16_t BLACK = 0x0000;
 const uint16_t WHITE = 0xffff;
+const uint16_t GRAY = 0x8430;
 const uint16_t BLUE = 0x001f;
 const uint16_t RED = 0xF800;
 const uint16_t YELLOW = 0xffe0;
@@ -68,7 +76,7 @@ long oldPosition = 0;
 // Count pages from 0
 int currentPage = 0;
 int pageCount = 4;
-int menuLevel = 0;
+bool pageSelected = false;
 
 void setup() {
   AudioNoInterrupts();
@@ -89,14 +97,29 @@ void setup() {
   sgtl5000_1.inputSelect(AUDIO_INPUT_LINEIN);
   sgtl5000_1.volume(1);
 
+  // Tuner
+  notefreqAmp.gain(0);
   notefreq1.begin(0.15);
+
+  // Effects
+  reverbMixer.gain(0, 0);
+  reverbMixer.gain(1, 0);
+  reverbOnOffMixer.gain(0, 1);
+  reverbOnOffMixer.gain(1, 0);
+  freeverb1.roomsize(0);
+  freeverb1.damping(0);
+
 
   AudioInterrupts();
 
   page0_setup();
 }
 
+int previousMemoryUsage = 0;
+
 void loop() {
+  //printAudioMemoryUsage();
+  
   switch (currentPage) {
     case 0:
       page0_loop();
@@ -115,7 +138,7 @@ void loop() {
       break;
   }
 
-  if (menuLevel == 0) {
+  if (!pageSelected) {
     int encoder = readEncoder();
     if (encoder != 0) {
       switchPage(currentPage + encoder);
@@ -165,4 +188,12 @@ long readEncoder() {
     return (-1);
   }
   return (0);
+}
+
+void printAudioMemoryUsage() {
+  int memoryUsage = AudioMemoryUsage();
+  if(memoryUsage != previousMemoryUsage) {
+    previousMemoryUsage = memoryUsage;
+    Serial.println(memoryUsage);
+  }
 }

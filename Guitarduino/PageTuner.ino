@@ -125,19 +125,21 @@ void tuner_setup() {
 void tuner_loop() {
   // In and out toggle
   if(digitalRead(1) == LOW) {
-    if(menuLevel == 0) {
-      menuLevel = 1;
+    if(!pageSelected) {
+      pageSelected = true;
+      notefreqAmp.gain(1);
       display.fillScreen(BLACK);
       display.display();
     }
-    else if(menuLevel == 1) {
-      menuLevel = 0;
+    else if(pageSelected) {
+      pageSelected = false;
+      notefreqAmp.gain(0);
       tuner_setup();
     }
     delay(300);
   }
 
-  if(menuLevel == 1 && notefreq1.available()) {
+  if(pageSelected && notefreq1.available()) {
     float freq = notefreq1.read();
 
     // Find closest note
