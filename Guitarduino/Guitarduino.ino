@@ -29,24 +29,29 @@
 #include <SerialFlash.h>
 
 // GUItool: begin automatically generated code
-AudioInputI2S            i2s1;           //xy=145.1999969482422,804.200023651123
-AudioAmplifier           notefreqAmp;           //xy=154.20000076293945,701.2000226974487
-AudioAnalyzeNoteFrequency notefreq1;      //xy=310.20003509521484,703.200023651123
-AudioEffectFreeverb      freeverb1;      //xy=372.2000045776367,906.4000091552734
-AudioMixer4              reverbMixer;         //xy=577.200065612793,882.2000255584717
-AudioMixer4              reverbOnOffMixer;         //xy=764.2000350952148,848.200023651123
-AudioOutputI2S           i2s2;           //xy=996.2003479003906,841.2000246047974
+AudioInputI2S            i2s1;           //xy=283,857
+AudioAmplifier           notefreqAmp;    //xy=292,754
+AudioAmplifier           delayAmp;           //xy=440,1061
+AudioAnalyzeNoteFrequency notefreq1;      //xy=448,756
+AudioMixer4              delayMixer;         //xy=582,910
+AudioEffectDelay         delay1;         //xy=583,1062
+AudioEffectFreeverb      freeverb1;      //xy=868,965
+AudioMixer4              reverbMixer;    //xy=873,905
+AudioAmplifier           reverbAmp;           //xy=877,1015
+AudioOutputI2S           i2s2;           //xy=1127,901
 AudioConnection          patchCord1(i2s1, 1, notefreqAmp, 0);
-AudioConnection          patchCord2(i2s1, 1, reverbMixer, 0);
-AudioConnection          patchCord3(i2s1, 1, reverbOnOffMixer, 0);
-AudioConnection          patchCord4(i2s1, 1, freeverb1, 0);
-AudioConnection          patchCord5(notefreqAmp, notefreq1);
-AudioConnection          patchCord6(freeverb1, 0, reverbMixer, 1);
-AudioConnection          patchCord7(reverbMixer, 0, reverbOnOffMixer, 1);
-AudioConnection          patchCord8(reverbOnOffMixer, 0, i2s2, 1);
-AudioControlSGTL5000     sgtl5000_1;     //xy=205.1999969482422,578.2000217437744
+AudioConnection          patchCord2(i2s1, 1, delayMixer, 0);
+AudioConnection          patchCord3(notefreqAmp, notefreq1);
+AudioConnection          patchCord4(delayAmp, delay1);
+AudioConnection          patchCord5(delayMixer, 0, reverbMixer, 0);
+AudioConnection          patchCord6(delayMixer, reverbAmp);
+AudioConnection          patchCord7(delayMixer, delayAmp);
+AudioConnection          patchCord8(delay1, 0, delayMixer, 1);
+AudioConnection          patchCord9(freeverb1, 0, reverbMixer, 1);
+AudioConnection          patchCord10(reverbMixer, 0, i2s2, 1);
+AudioConnection          patchCord11(reverbAmp, freeverb1);
+AudioControlSGTL5000     sgtl5000_1;     //xy=343,631
 // GUItool: end automatically generated code
-
 
 
 
@@ -81,33 +86,41 @@ bool pageSelected = false;
 void setup() {
   AudioNoInterrupts();
 
-  // System
+  /* System */
   Serial.begin(9600);
   pinMode(1, INPUT_PULLUP);
 
-  // Display
+  /* Display */
   display.initR(INITR_MINI160x80);
   display.setRotation(3);
   display.invertDisplay(true);
 
-  // Audio
-  AudioMemory(50);
+  /* Audio */
+  AudioMemory(700);
   
   sgtl5000_1.enable();
   sgtl5000_1.inputSelect(AUDIO_INPUT_LINEIN);
   sgtl5000_1.volume(1);
 
-  // Tuner
+  /* Tuner */
   notefreqAmp.gain(0);
   notefreq1.begin(0.15);
 
-  // Effects
-  reverbMixer.gain(0, 0);
+  /* Effects */
+  //Freeverb
+  reverbAmp.gain(0);
+  reverbMixer.gain(0, 1);
   reverbMixer.gain(1, 0);
-  reverbOnOffMixer.gain(0, 1);
-  reverbOnOffMixer.gain(1, 0);
   freeverb1.roomsize(0);
   freeverb1.damping(0);
+
+  //Delay
+  delayAmp.gain(0);
+  delayMixer.gain(0, 1);
+  delayMixer.gain(1, 0);
+  for(int i = 1; i < 7; i++) {
+    delay1.disable(i);
+  }
 
 
   AudioInterrupts();
@@ -118,7 +131,7 @@ void setup() {
 int previousMemoryUsage = 0;
 
 void loop() {
-  //printAudioMemoryUsage();
+  printAudioMemoryUsage();
   
   switch (currentPage) {
     case 0:
