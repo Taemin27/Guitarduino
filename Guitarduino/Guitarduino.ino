@@ -29,29 +29,40 @@
 #include <SerialFlash.h>
 
 // GUItool: begin automatically generated code
-AudioInputI2S            i2s1;           //xy=283,857
-AudioAmplifier           notefreqAmp;    //xy=292,754
-AudioAmplifier           delayAmp;           //xy=440,1061
-AudioAnalyzeNoteFrequency notefreq1;      //xy=448,756
-AudioMixer4              delayMixer;         //xy=582,910
-AudioEffectDelay         delay1;         //xy=583,1062
-AudioEffectFreeverb      freeverb1;      //xy=868,965
-AudioMixer4              reverbMixer;    //xy=873,905
-AudioAmplifier           reverbAmp;           //xy=877,1015
-AudioOutputI2S           i2s2;           //xy=1127,901
+AudioInputI2S            i2s1;           //xy=261.1999816894531,532.2000122070312
+AudioAmplifier           notefreqAmp;    //xy=452.1999816894531,457.20001220703125
+AudioSynthWaveformDc     overdriveDC;            //xy=588.2002382278442,820.2000331878662
+AudioMixer4              overdriveMixer;         //xy=590.2000389099121,658.2000312805176
+AudioFilterBiquad        overdriveBiquad;        //xy=590.200065612793,720.2000303268433
+AudioEffectWaveFolder    overdriveWaveFolder;    //xy=591.2001800537109,771.2000331878662
+AudioAnalyzeNoteFrequency notefreq1;      //xy=608.1999816894531,459.20001220703125
+AudioAmplifier           delayAmp;       //xy=865.2000427246094,790.200029373169
+AudioMixer4              delayMixer;     //xy=949.2000427246094,656.200029373169
+AudioEffectDelay         delay1;         //xy=1000.2000427246094,813.200029373169
+AudioEffectFreeverb      freeverb1;      //xy=1269.2000427246094,715.200029373169
+AudioMixer4              reverbMixer;    //xy=1274.2000427246094,655.200029373169
+AudioAmplifier           reverbAmp;      //xy=1278.2000427246094,765.200029373169
+AudioOutputI2S           i2s2;           //xy=1544.2001266479492,645.200029373169
 AudioConnection          patchCord1(i2s1, 1, notefreqAmp, 0);
-AudioConnection          patchCord2(i2s1, 1, delayMixer, 0);
-AudioConnection          patchCord3(notefreqAmp, notefreq1);
-AudioConnection          patchCord4(delayAmp, delay1);
-AudioConnection          patchCord5(delayMixer, 0, reverbMixer, 0);
-AudioConnection          patchCord6(delayMixer, reverbAmp);
-AudioConnection          patchCord7(delayMixer, delayAmp);
-AudioConnection          patchCord8(delay1, 0, delayMixer, 1);
-AudioConnection          patchCord9(freeverb1, 0, reverbMixer, 1);
-AudioConnection          patchCord10(reverbMixer, 0, i2s2, 1);
-AudioConnection          patchCord11(reverbAmp, freeverb1);
-AudioControlSGTL5000     sgtl5000_1;     //xy=343,631
+AudioConnection          patchCord2(i2s1, 1, overdriveWaveFolder, 0);
+AudioConnection          patchCord3(i2s1, 1, overdriveMixer, 0);
+AudioConnection          patchCord4(notefreqAmp, notefreq1);
+AudioConnection          patchCord5(overdriveDC, 0, overdriveWaveFolder, 1);
+AudioConnection          patchCord6(overdriveMixer, 0, delayMixer, 0);
+AudioConnection          patchCord7(overdriveBiquad, 0, overdriveMixer, 1);
+AudioConnection          patchCord8(overdriveWaveFolder, overdriveBiquad);
+AudioConnection          patchCord9(delayAmp, delay1);
+AudioConnection          patchCord10(delayMixer, 0, reverbMixer, 0);
+AudioConnection          patchCord11(delayMixer, reverbAmp);
+AudioConnection          patchCord12(delayMixer, delayAmp);
+AudioConnection          patchCord13(delay1, 0, delayMixer, 1);
+AudioConnection          patchCord14(freeverb1, 0, reverbMixer, 1);
+AudioConnection          patchCord15(reverbMixer, 0, i2s2, 1);
+AudioConnection          patchCord16(reverbAmp, freeverb1);
+AudioControlSGTL5000     sgtl5000_1;     //xy=141.19998168945312,532.2000122070312
 // GUItool: end automatically generated code
+
+
 
 
 
@@ -102,17 +113,17 @@ void setup() {
   sgtl5000_1.inputSelect(AUDIO_INPUT_LINEIN);
   sgtl5000_1.volume(1);
 
+  sgtl5000_1.adcHighPassFilterDisable();
+
   /* Tuner */
   notefreqAmp.gain(0);
   notefreq1.begin(0.15);
 
   /* Effects */
-  //Freeverb
-  reverbAmp.gain(0);
-  reverbMixer.gain(0, 1);
-  reverbMixer.gain(1, 0);
-  freeverb1.roomsize(0);
-  freeverb1.damping(0);
+  //Overdrive
+  overdriveMixer.gain(0, 1);
+  overdriveMixer.gain(1, 0);
+  overdriveDC.amplitude(0);
 
   //Delay
   delayAmp.gain(0);
@@ -122,7 +133,14 @@ void setup() {
     delay1.disable(i);
   }
 
+  //Freeverb
+  reverbAmp.gain(0);
+  reverbMixer.gain(0, 1);
+  reverbMixer.gain(1, 0);
+  freeverb1.roomsize(0);
+  freeverb1.damping(0);
 
+  
   AudioInterrupts();
 
   page0_setup();

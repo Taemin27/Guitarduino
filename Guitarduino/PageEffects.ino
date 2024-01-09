@@ -135,20 +135,29 @@ int ef_cursorLoc = 0;
 int ef_maxCursorLoc = 0;
 bool ef_valueSelected = false;
 
+
+// Drive effects variables
+bool ef_drive_on = false;
+int ef_drive_mode = 0;    // 0: Overdrive, 1: Distortion, 2: Fuzz
+int ef_od_drive = 5;
+int ef_od_level = 5;
+int ef_od_tone = 5;
+
 // Time-Based effects variables
 bool ef_reverb_on = false;
-int ef_reverb_roomSize = 0;
-int ef_reverb_damping = 0;
-int ef_reverb_wetDry = 0;
+int ef_reverb_roomSize = 5;
+int ef_reverb_damping = 7;
+int ef_reverb_wetDry = 3;
 
 bool ef_delay_on = false;
-float ef_delay_time = 0;
-int ef_delay_feedback = 0;
-int ef_delay_level = 10;
+float ef_delay_time = 0.15;
+int ef_delay_feedback = 5;
+int ef_delay_level = 7;
 
 enum Ef_pages {
   home,
   typeMenu,
+    driveSettings,
     timeBased,
       delaySettings,
       reverbSettings
@@ -183,10 +192,38 @@ void effects_loop() {
             ef_currentPage = home;
             effects_setup();
             break;
+          case 4:
+            ef_currentPage = driveSettings;
+            ef_cursorLoc = 0;
+            ef_drawDrive();
+            display.display();
+            break;
           case 6:
             ef_currentPage = timeBased;
             ef_cursorLoc = 0;
             ef_drawTimeBased();
+            display.display();
+            break;
+        }
+        break;
+
+      // Drive menu
+      case driveSettings:
+        switch(ef_cursorLoc) {
+          case 0:
+            ef_currentPage = typeMenu;
+            ef_cursorLoc = 4;
+            ef_drawTypeMenu();
+            display.display();
+            break;
+          case 1:
+            ef_drive_on = !ef_drive_on;
+            ef_drawDrive();
+            display.display();
+            break;
+          default:
+            ef_valueSelected = !ef_valueSelected;
+            ef_drawDrive();
             display.display();
             break;
         }
@@ -274,19 +311,54 @@ void effects_loop() {
         // Changing effect values
         if (ef_valueSelected) {
           switch(ef_currentPage) {
+
+            case driveSettings:
+              // OD
+              if(ef_drive_mode == 0) {
+                if (ef_cursorLoc == 1) {
+                  ef_drive_mode = 1;
+                }
+                else if (ef_cursorLoc == 2) {
+                  if(ef_od_drive < 10) {
+                    ef_od_drive ++;
+                  }
+                }
+                else if (ef_cursorLoc == 3) {
+                  if(ef_od_level < 10) {
+                    ef_od_level ++;
+                  }
+                }
+                else if (ef_cursorLoc == 4) {
+                  if(ef_od_tone < 10) {
+                    ef_od_tone ++;
+                  }
+                }
+              }
+
+              // DS
+              else if (ef_drive_mode == 1) {
+
+              }
+
+              // FZ
+              else if (ef_drive_mode == 3) {
+
+              }
+              break;
+
             case delaySettings:
-              if(ef_cursorLoc == 2) {
-                if  (ef_delay_time <= 1.49) {
+              if (ef_cursorLoc == 2) {
+                if (ef_delay_time <= 1.49) {
                   ef_delay_time += 0.03;
                 }
               }
-              else if(ef_cursorLoc == 3) {
-                if  (ef_delay_feedback < 9) {
+              else if (ef_cursorLoc == 3) {
+                if (ef_delay_feedback < 9) {
                   ef_delay_feedback ++;
                 }
               }
-              else if(ef_cursorLoc == 4) {
-                if  (ef_delay_level < 10) {
+              else if (ef_cursorLoc == 4) {
+                if (ef_delay_level < 10) {
                   ef_delay_level ++;
                 }
               }
@@ -326,6 +398,38 @@ void effects_loop() {
         // Changing effect values
         if (ef_valueSelected) {
           switch(ef_currentPage) {
+
+            case driveSettings:
+              // OD
+              if(ef_drive_mode == 0) {
+                if (ef_cursorLoc == 2) {
+                  if(ef_od_drive > 0) {
+                    ef_od_drive --;
+                  }
+                }
+                else if (ef_cursorLoc == 3) {
+                  if(ef_od_level > 0) {
+                    ef_od_level --;
+                  }
+                }
+                else if (ef_cursorLoc == 4) {
+                  if(ef_od_tone > 0) {
+                    ef_od_tone --;
+                  }
+                }
+              }
+
+              // DS
+              else if (ef_drive_mode == 1) {
+
+              }
+              
+              // FZ
+              else if (ef_drive_mode == 3) {
+
+              }
+              break;
+
             case delaySettings:
               if(ef_cursorLoc == 2) {
                 if  (ef_delay_time >= 0.01) {
@@ -378,6 +482,10 @@ void effects_loop() {
         case typeMenu:
           ef_drawTypeMenu();
           break;
+
+          case driveSettings:
+            ef_drawDrive();
+            break;
 
           case timeBased:
             ef_drawTimeBased();
@@ -450,6 +558,121 @@ void ef_drawTypeMenu() {
   }
 }
 
+void ef_drawDrive() {
+  ef_maxCursorLoc = 4;
+  display.fillScreen(BLACK);
+  display.setTextSize(2);
+  display.setTextColor(WHITE);
+  display.setCursor(0, 0);
+  display.print("<<< ");
+
+  int drive = 0;
+  int level = 0;
+  int tone = 0;
+  String mode = "";
+
+  // Overdrive
+  if(ef_drive_mode == 0) {
+    if(ef_drive_on) {
+      // Enable OD and apply settings
+      ef_drive_disable();
+
+      overdriveMixer.gain(0, 0);
+      overdriveMixer.gain(1, float(ef_od_level) / 10);
+      overdriveDC.amplitude(float(ef_od_drive) * 0.06 + 0.1);
+      overdriveBiquad.setLowpass(0, ef_od_tone * 900 + 1000, 0.3);
+
+      display.setTextColor(GREEN);
+    }
+    else {
+      ef_drive_disable();
+
+      display.setTextColor(GRAY);
+    }
+    display.println("Mode: OD");
+    display.setTextColor(WHITE);
+
+    mode = "Mode: OD";
+    drive = ef_od_drive;
+    level = ef_od_level;
+    tone = ef_od_tone;
+  }
+
+  // Distortion
+  else if(ef_drive_mode == 1) {
+    display.println("Mode: DS");
+
+  }
+
+  // Fuzz
+  else if(ef_drive_mode == 2) {
+    display.println("Mode: FZ");
+
+  }
+
+  // Parameters
+  display.println("Drive      " + String(ef_od_drive));
+  display.println("Level      " + String(ef_od_level));
+  display.println("Tone       " + String(ef_od_tone));
+
+  // Cursor on parameter value
+  display.setTextColor(BLUE);
+  if (ef_valueSelected) {
+    switch(ef_cursorLoc) {
+      case 2:
+        display.setCursor(132, 16);
+        display.print(drive);
+        break;
+      case 3:
+        display.setCursor(132, 32);
+        display.print(level);
+        break;
+      case 4:
+        display.setCursor(132, 48);
+        display.print(tone);
+        break;
+    }
+  }
+  // Cursor on parameter name
+  else {
+    switch(ef_cursorLoc) {
+      case 0:
+        display.setCursor(0, 0);
+        display.print("<<<");
+        break;
+      case 1:
+        if (ef_drive_on) {
+          display.setTextColor(GREEN, WHITE);
+        }
+        else {
+          display.setTextColor(GRAY, WHITE);
+        }
+        display.setCursor(48, 0);
+        display.print(mode);
+        break;
+      case 2:
+        display.setCursor(0, 16);
+        display.print("Drive");
+        break;
+      case 3:
+        display.setCursor(0, 32);
+        display.print("Level");
+        break;
+      case 4:
+        display.setCursor(0, 48);
+        display.print("Tone");
+        break;
+    }
+  }
+}
+
+void ef_drive_disable() {
+  overdriveMixer.gain(0, 1);
+  overdriveMixer.gain(1, 0);
+  overdriveDC.amplitude(0);
+}
+
+
 void ef_drawTimeBased() {
   ef_maxCursorLoc = 2;
   
@@ -488,24 +711,24 @@ void ef_drawDelay() {
   display.print("<<< ");
   // Delay on/off
   if (ef_delay_on) {
-    display.setTextColor(GREEN);
-    display.println("Delay");
-    display.setTextColor(WHITE);
-
     // Enable delay and apply settings
     delay1.delay(0, ef_delay_time * 1000);
     delayAmp.gain(float(ef_delay_feedback) / 10);
     delayMixer.gain(1, float(ef_delay_level) / 10);
+
+    display.setTextColor(GREEN);
   }
   else {
-    display.setTextColor(GRAY);
-    display.println("Delay");
-    display.setTextColor(WHITE);
-
     // Disable delay
     delayAmp.gain(0);
     delayMixer.gain(1, 0);
+
+    display.setTextColor(GRAY);
   }
+
+  display.println("Delay");
+  display.setTextColor(WHITE);
+
   // Parameters
   display.println("Time(s)  " + String(ef_delay_time));
   display.println("Feedback   " + String(ef_delay_feedback));
@@ -572,27 +795,27 @@ void ef_drawReverb() {
   display.print("<<< ");
   // Reverb on/off
   if(ef_reverb_on) {
-    display.setTextColor(GREEN);
-    display.println("Reverb");
-    display.setTextColor(WHITE);
-
     // Enable reverb and apply settings
     freeverb1.roomsize(float(ef_reverb_roomSize) / 10);
     freeverb1.damping(float(ef_reverb_damping) / 10);
     reverbAmp.gain(1);
     reverbMixer.gain(0, float(10 - ef_reverb_wetDry) / 10);
     reverbMixer.gain(1, float(ef_reverb_wetDry) / 10);
+
+    display.setTextColor(GREEN);
   }
   else {
-    display.setTextColor(GRAY);
-    display.println("Reverb");
-    display.setTextColor(WHITE);
-
     // Bypass reverb
     reverbAmp.gain(0);
     reverbMixer.gain(0, 1);
     reverbMixer.gain(1, 0);
+
+    display.setTextColor(GRAY);    
   }
+
+  display.println("Reverb");
+  display.setTextColor(WHITE);
+
   // Parameters
   display.println("Room Size  " + String(ef_reverb_roomSize));
   display.println("Damping    " + String(ef_reverb_damping));
