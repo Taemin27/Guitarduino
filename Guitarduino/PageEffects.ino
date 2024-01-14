@@ -578,9 +578,10 @@ void ef_drawDrive() {
       ef_drive_disable();
 
       overdriveMixer.gain(0, 0);
-      overdriveMixer.gain(1, float(ef_od_level) / 10);
-      overdriveDC.amplitude(float(ef_od_drive) * 0.06 + 0.1);
-      overdriveBiquad.setLowpass(0, ef_od_tone * 900 + 1000, 0.3);
+      overdriveMixer.gain(1, 1);
+      overdriveGainAmp.gain((ef_od_drive * 2) + 3);
+      overdriveLevelAmp.gain(float(ef_od_level) / 100);
+      overdriveBiquad.setLowpass(0, ef_od_tone * 1400 + 1000, 0.3);
 
       display.setTextColor(GREEN);
     }
@@ -669,7 +670,8 @@ void ef_drawDrive() {
 void ef_drive_disable() {
   overdriveMixer.gain(0, 1);
   overdriveMixer.gain(1, 0);
-  overdriveDC.amplitude(0);
+  overdriveGainAmp.gain(0);
+  overdriveLevelAmp.gain(0);
 }
 
 
