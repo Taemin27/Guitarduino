@@ -29,39 +29,46 @@
 #include <SerialFlash.h>
 
 // GUItool: begin automatically generated code
+AudioSynthWaveformDc     dc1;            //xy=184.20000457763672,585.2000370025635
 AudioInputI2S            i2s1;           //xy=191.1999969482422,378.1999816894531
 AudioAmplifier           notefreqAmp;    //xy=382.1999969482422,303.1999816894531
-AudioAmplifier           overdriveLevelAmp;           //xy=515.2000350952148,624.2000341415405
-AudioAmplifier           overdriveGainAmp;           //xy=519.2000350952148,677.2000350952148
-AudioMixer4              overdriveMixer; //xy=520.1999969482422,504.1999816894531
-AudioFilterBiquad        overdriveBiquad; //xy=520.1999969482422,566.1999816894531
+AudioMixer4              overdriveMixer; //xy=504.20003509521484,513.2000350952148
+AudioEffectWaveFolder    wavefolder1;    //xy=511.20003509521484,587.2000360488892
+AudioAmplifier           overdriveLevelAmp;           //xy=516.2000732421875,780.2000303268433
+AudioAmplifier           distortionLevelAmp; //xy=517.2001647949219,694.2000298500061
+AudioAmplifier           distortionGainAmp; //xy=519.2001037597656,729.2000303268433
+AudioAmplifier           overdriveGainAmp;           //xy=520.2000732421875,833.2000312805176
+AudioFilterBiquad        overdriveBiquad; //xy=524.2000350952148,642.1999750137329
 AudioAnalyzeNoteFrequency notefreq1;      //xy=538.1999969482422,305.1999816894531
-AudioAmplifier           delayAmp;       //xy=795.1999969482422,636.1999816894531
-AudioMixer4              delayMixer;     //xy=879.1999969482422,502.1999816894531
-AudioEffectDelay         delay1;         //xy=930.1999969482422,659.1999816894531
-AudioEffectFreeverb      freeverb1;      //xy=1199.1999969482422,561.1999816894531
-AudioMixer4              reverbMixer;    //xy=1204.1999969482422,501.1999816894531
-AudioAmplifier           reverbAmp;      //xy=1208.1999969482422,611.1999816894531
-AudioOutputI2S           i2s2;           //xy=1474.1999969482422,491.1999816894531
-AudioConnection          patchCord1(i2s1, 1, notefreqAmp, 0);
-AudioConnection          patchCord2(i2s1, 1, overdriveMixer, 0);
-AudioConnection          patchCord3(i2s1, 1, overdriveGainAmp, 0);
-AudioConnection          patchCord4(notefreqAmp, notefreq1);
-AudioConnection          patchCord5(overdriveLevelAmp, overdriveBiquad);
-AudioConnection          patchCord6(overdriveGainAmp, overdriveLevelAmp);
-AudioConnection          patchCord7(overdriveMixer, 0, delayMixer, 0);
-AudioConnection          patchCord8(overdriveBiquad, 0, overdriveMixer, 1);
-AudioConnection          patchCord9(delayAmp, delay1);
-AudioConnection          patchCord10(delayMixer, 0, reverbMixer, 0);
-AudioConnection          patchCord11(delayMixer, reverbAmp);
-AudioConnection          patchCord12(delayMixer, delayAmp);
-AudioConnection          patchCord13(delay1, 0, delayMixer, 1);
-AudioConnection          patchCord14(freeverb1, 0, reverbMixer, 1);
-AudioConnection          patchCord15(reverbMixer, 0, i2s2, 1);
-AudioConnection          patchCord16(reverbAmp, freeverb1);
+AudioAmplifier           delayAmp;       //xy=1043.1999816894531,648.1999778747559
+AudioMixer4              delayMixer;     //xy=1127.1999816894531,514.1999778747559
+AudioEffectDelay         delay1;         //xy=1178.1999816894531,671.1999778747559
+AudioEffectFreeverb      freeverb1;      //xy=1447.1999816894531,573.1999778747559
+AudioMixer4              reverbMixer;    //xy=1452.1999816894531,513.1999778747559
+AudioAmplifier           reverbAmp;      //xy=1456.1999816894531,623.1999778747559
+AudioOutputI2S           i2s2;           //xy=1722.1999816894531,503.19997787475586
+AudioConnection          patchCord1(dc1, 0, wavefolder1, 1);
+AudioConnection          patchCord2(i2s1, 1, notefreqAmp, 0);
+AudioConnection          patchCord3(i2s1, 1, overdriveMixer, 0);
+AudioConnection          patchCord4(i2s1, 1, overdriveGainAmp, 0);
+AudioConnection          patchCord5(notefreqAmp, notefreq1);
+AudioConnection          patchCord6(overdriveMixer, 0, delayMixer, 0);
+AudioConnection          patchCord7(wavefolder1, 0, overdriveMixer, 1);
+AudioConnection          patchCord8(overdriveLevelAmp, distortionGainAmp);
+AudioConnection          patchCord9(distortionLevelAmp, overdriveBiquad);
+AudioConnection          patchCord10(distortionGainAmp, distortionLevelAmp);
+AudioConnection          patchCord11(overdriveGainAmp, overdriveLevelAmp);
+AudioConnection          patchCord12(overdriveBiquad, 0, wavefolder1, 0);
+AudioConnection          patchCord13(delayAmp, delay1);
+AudioConnection          patchCord14(delayMixer, 0, reverbMixer, 0);
+AudioConnection          patchCord15(delayMixer, reverbAmp);
+AudioConnection          patchCord16(delayMixer, delayAmp);
+AudioConnection          patchCord17(delay1, 0, delayMixer, 1);
+AudioConnection          patchCord18(freeverb1, 0, reverbMixer, 1);
+AudioConnection          patchCord19(reverbMixer, 0, i2s2, 1);
+AudioConnection          patchCord20(reverbAmp, freeverb1);
 AudioControlSGTL5000     sgtl5000_1;     //xy=71.19999694824219,378.1999816894531
 // GUItool: end automatically generated code
-
 
 
 
@@ -121,11 +128,9 @@ void setup() {
   notefreq1.begin(0.15);
 
   /* Effects */
-  //Overdrive
-  overdriveMixer.gain(0, 1);
-  overdriveMixer.gain(1, 0);
-  overdriveGainAmp.gain(0);
-  overdriveLevelAmp.gain(0);
+  //Drive
+  dc1.amplitude(0.1);
+  ef_drive_disable();
 
   //Delay
   delayAmp.gain(0);

@@ -142,6 +142,9 @@ int ef_drive_mode = 0;    // 0: Overdrive, 1: Distortion, 2: Fuzz
 int ef_od_drive = 5;
 int ef_od_level = 5;
 int ef_od_tone = 5;
+int ef_ds_drive = 5;
+int ef_ds_level = 5;
+int ef_ds_tone = 5;
 
 // Time-Based effects variables
 bool ef_reverb_on = false;
@@ -315,20 +318,20 @@ void effects_loop() {
             case driveSettings:
               // OD
               if(ef_drive_mode == 0) {
-                if (ef_cursorLoc == 1) {
+                if (ef_cursorLoc == 2) {
                   ef_drive_mode = 1;
                 }
-                else if (ef_cursorLoc == 2) {
+                else if (ef_cursorLoc == 3) {
                   if(ef_od_drive < 10) {
                     ef_od_drive ++;
                   }
                 }
-                else if (ef_cursorLoc == 3) {
+                else if (ef_cursorLoc == 4) {
                   if(ef_od_level < 10) {
                     ef_od_level ++;
                   }
                 }
-                else if (ef_cursorLoc == 4) {
+                else if (ef_cursorLoc == 5) {
                   if(ef_od_tone < 10) {
                     ef_od_tone ++;
                   }
@@ -337,7 +340,24 @@ void effects_loop() {
 
               // DS
               else if (ef_drive_mode == 1) {
-
+                if (ef_cursorLoc == 2) {
+                  ef_drive_mode = 2;
+                }
+                else if (ef_cursorLoc == 3) {
+                  if(ef_ds_drive < 10) {
+                    ef_ds_drive ++;
+                  }
+                }
+                else if (ef_cursorLoc == 4) {
+                  if(ef_ds_level < 10) {
+                    ef_ds_level ++;
+                  }
+                }
+                else if (ef_cursorLoc == 5) {
+                  if(ef_ds_tone < 10) {
+                    ef_ds_tone ++;
+                  }
+                }
               }
 
               // FZ
@@ -402,17 +422,17 @@ void effects_loop() {
             case driveSettings:
               // OD
               if(ef_drive_mode == 0) {
-                if (ef_cursorLoc == 2) {
+                if (ef_cursorLoc == 3) {
                   if(ef_od_drive > 0) {
                     ef_od_drive --;
                   }
                 }
-                else if (ef_cursorLoc == 3) {
+                else if (ef_cursorLoc == 4) {
                   if(ef_od_level > 0) {
                     ef_od_level --;
                   }
                 }
-                else if (ef_cursorLoc == 4) {
+                else if (ef_cursorLoc == 5) {
                   if(ef_od_tone > 0) {
                     ef_od_tone --;
                   }
@@ -421,7 +441,24 @@ void effects_loop() {
 
               // DS
               else if (ef_drive_mode == 1) {
-
+                if (ef_cursorLoc == 2) {
+                  ef_drive_mode = 0;
+                }
+                else if (ef_cursorLoc == 3) {
+                  if(ef_ds_drive > 0) {
+                    ef_ds_drive --;
+                  }
+                }
+                else if (ef_cursorLoc == 4) {
+                  if(ef_ds_level > 0) {
+                    ef_ds_level --;
+                  }
+                }
+                else if (ef_cursorLoc == 5) {
+                  if(ef_ds_tone > 0) {
+                    ef_ds_tone --;
+                  }
+                }
               }
               
               // FZ
@@ -559,7 +596,7 @@ void ef_drawTypeMenu() {
 }
 
 void ef_drawDrive() {
-  ef_maxCursorLoc = 4;
+  ef_maxCursorLoc = 5;
   display.fillScreen(BLACK);
   display.setTextSize(2);
   display.setTextColor(WHITE);
@@ -580,7 +617,9 @@ void ef_drawDrive() {
       overdriveMixer.gain(0, 0);
       overdriveMixer.gain(1, 1);
       overdriveGainAmp.gain((ef_od_drive * 2) + 3);
-      overdriveLevelAmp.gain(float(ef_od_level) / 100);
+      overdriveLevelAmp.gain(float(ef_od_level) / 50);
+      distortionGainAmp.gain(1);
+      distortionLevelAmp.gain(1);
       overdriveBiquad.setLowpass(0, ef_od_tone * 1400 + 1000, 0.3);
 
       display.setTextColor(GREEN);
@@ -590,10 +629,8 @@ void ef_drawDrive() {
 
       display.setTextColor(GRAY);
     }
-    display.println("Mode: OD");
-    display.setTextColor(WHITE);
-
-    mode = "Mode: OD";
+    
+    mode = "OD";
     drive = ef_od_drive;
     level = ef_od_level;
     tone = ef_od_tone;
@@ -601,20 +638,46 @@ void ef_drawDrive() {
 
   // Distortion
   else if(ef_drive_mode == 1) {
-    display.println("Mode: DS");
+    if(ef_drive_on) {
+      // Enable DS and apply settings
+      ef_drive_disable();
 
+      overdriveMixer.gain(0, 0);
+      overdriveMixer.gain(1, 1);
+      overdriveGainAmp.gain((ef_ds_drive * 2) + 3);
+      overdriveLevelAmp.gain(float(ef_ds_level) / 50);
+      distortionGainAmp.gain((ef_ds_drive * 2) + 3);
+      distortionLevelAmp.gain(float(ef_ds_level) / 50);
+      overdriveBiquad.setLowpass(0, ef_ds_tone * 1400 + 1000, 0.3);
+
+      display.setTextColor(GREEN);
+    }
+    else {
+      ef_drive_disable();
+
+      display.setTextColor(GRAY);
+    }
+    
+    mode = "DS";
+    drive = ef_ds_drive;
+    level = ef_ds_level;
+    tone = ef_ds_tone;
   }
 
   // Fuzz
   else if(ef_drive_mode == 2) {
-    display.println("Mode: FZ");
+    
 
   }
 
+  display.println("Drive");
+  display.setTextColor(WHITE);
+
   // Parameters
-  display.println("Drive      " + String(ef_od_drive));
-  display.println("Level      " + String(ef_od_level));
-  display.println("Tone       " + String(ef_od_tone));
+  display.println("Mode       " + mode);
+  display.println("Drive      " + String(drive));
+  display.println("Level      " + String(level));
+  display.println("Tone       " + String(tone));
 
   // Cursor on parameter value
   display.setTextColor(BLUE);
@@ -622,14 +685,18 @@ void ef_drawDrive() {
     switch(ef_cursorLoc) {
       case 2:
         display.setCursor(132, 16);
-        display.print(drive);
+        display.print(mode);
         break;
       case 3:
         display.setCursor(132, 32);
-        display.print(level);
+        display.print(drive);
         break;
       case 4:
         display.setCursor(132, 48);
+        display.print(level);
+        break;
+      case 5:
+        display.setCursor(132, 64);
         display.print(tone);
         break;
     }
@@ -649,18 +716,22 @@ void ef_drawDrive() {
           display.setTextColor(GRAY, WHITE);
         }
         display.setCursor(48, 0);
-        display.print(mode);
+        display.print("Drive");
         break;
       case 2:
         display.setCursor(0, 16);
-        display.print("Drive");
+        display.print("Mode");
         break;
       case 3:
         display.setCursor(0, 32);
-        display.print("Level");
+        display.print("Drive");
         break;
       case 4:
         display.setCursor(0, 48);
+        display.print("Level");
+        break;
+      case 5:
+        display.setCursor(0, 64);
         display.print("Tone");
         break;
     }
@@ -672,6 +743,8 @@ void ef_drive_disable() {
   overdriveMixer.gain(1, 0);
   overdriveGainAmp.gain(0);
   overdriveLevelAmp.gain(0);
+  distortionGainAmp.gain(0);
+  distortionLevelAmp.gain(0);
 }
 
 
