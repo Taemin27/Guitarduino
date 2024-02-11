@@ -299,7 +299,6 @@ void effects_loop() {
           }
           break;
     }
-    delay(300);
   }
 
   // Encoder turned

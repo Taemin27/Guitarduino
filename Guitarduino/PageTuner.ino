@@ -137,7 +137,6 @@ void tuner_loop() {
       notefreqAmp.gain(0);
       tuner_setup();
     }
-    delay(300);
   }
 
   if(pageSelected && notefreq1.available()) {
