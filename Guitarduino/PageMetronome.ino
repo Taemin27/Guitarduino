@@ -102,6 +102,13 @@ const unsigned char metronomeHome [] PROGMEM = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
 
+
+
+
+int metronome_cursorLoc = 0;
+bool metronome_valueSelected = false;
+
+
 void metronome_setup() {
   display.fillScreen(BLACK);
   display.drawBitmap(0, 0, metronomeHome, 160, 80, WHITE);
@@ -110,6 +117,193 @@ void metronome_setup() {
 }
 
 void metronome_loop() {
+  bounce.update();
+  if(bounce.changed() && bounce.read() == LOW) {
+    if(!pageSelected) {
+      pageSelected = true;
+      metronome_refresh();
+    }
+    else if(pageSelected) {
+      switch(metronome_cursorLoc) {
+        case 0:
+          pageSelected = false;
+          metronome_setup();
+          break;
+        case 3:
+          metronome_on = !metronome_on;
+          metronome_refresh();
+          break;
+        default:
+          metronome_valueSelected = !metronome_valueSelected;
+          metronome_refresh();
+          break;
+      }
+    }
+  }
   
+
+  if (pageSelected) {
+    
+
+
+
+
+    // Encoder
+    int encoder = readEncoder();
+    if(encoder == 0) {
+      
+    }
+    else {
+      // Right
+      if(encoder == 1) {
+        if(metronome_valueSelected) {
+          switch(metronome_cursorLoc) {
+            case 1:
+              if(metronome_beatsPerBar < 16) {
+                metronome_beatsPerBar ++;
+              }
+              break;
+            case 2:
+              if(metronome_bpm < 600) {
+                metronome_bpm ++;
+              }
+              break;
+          }
+        }
+        else {
+          if(metronome_cursorLoc < 3) {
+            metronome_cursorLoc ++;
+          }
+        }
+      }
+
+      // Left
+      else if(encoder == -1) {
+        if(metronome_valueSelected) {
+          switch(metronome_cursorLoc) {
+            case 1:
+              if(metronome_beatsPerBar > 1) {
+                metronome_beatsPerBar --;
+              }
+              break;
+            case 2:
+              if(metronome_bpm > 10) {
+                metronome_bpm --;
+              }
+              break;
+          }
+        }
+        else {
+          if(metronome_cursorLoc > 0) {
+            metronome_cursorLoc --;
+          }
+        }
+      }
+      metronome_refresh();
+      display.display();
+    }
+  }
 }
 
+void metronome_refresh() {
+  // UI
+  display.fillScreen(BLACK);
+  display.setTextColor(WHITE, BLACK);
+  display.setTextSize(1);
+
+  display.setCursor(0, 0);
+  display.print("<<<");
+
+  display.setCursor(6, 50);
+  display.print("Beats/Bar: " + String(metronome_beatsPerBar) + " ");
+
+  display.setCursor(106, 50);
+  display.print("BPM: " + String(metronome_bpm) + " ");
+
+  if (metronome_on) {
+    display.fillRect(73, 63, 4, 16, WHITE);
+    display.fillRect(82, 63, 4, 16, WHITE);
+  }
+  else {
+    display.fillTriangle(72, 63, 72, 79, 87, 71, WHITE);
+  }
+
+  // Selection highlight
+  display.setTextColor(BLUE, BLACK);
+  switch(metronome_cursorLoc) {
+    case 0:
+      display.setCursor(0, 0);
+      display.print("<<<");
+      break;
+    case 1:
+      if(metronome_valueSelected) {
+        display.setCursor(72, 50);
+        display.print(String(metronome_beatsPerBar) + " ");
+      }
+      else {
+        display.setCursor(6, 50);
+        display.print("Beats/Bar: ");
+      }
+
+      break;
+    case 2:
+      if(metronome_valueSelected) {
+        display.setCursor(136, 50);
+        display.print(String(metronome_bpm) + " ");
+      }
+      else {
+        display.setCursor(106, 50);
+        display.print("BPM: ");
+      }
+
+      break;
+    case 3:
+      if (metronome_on) {
+        display.fillRect(73, 63, 4, 16, BLUE);
+        display.fillRect(82, 63, 4, 16, BLUE);
+      }
+      else {
+        display.fillTriangle(72, 63, 72, 79, 87, 71, BLUE);
+      }
+      break;
+  }
+
+  metronome_drawIndicator();
+  display.display();
+}
+
+void metronome_drawIndicator() {
+  display.fillRect(0, 15, 160, 28, BLACK);
+  if(metronome_beatsPerBar <= 8) {
+    for(int i = 0; i < metronome_beatsPerBar; i++) {
+      int x = 20 * i + 80 - 10 * (metronome_beatsPerBar - 1);
+      if(i == metronome_currentBeat - 1) {
+        display.fillCircle(x, 28, 5, YELLOW);
+      }
+      else {
+        display.drawCircle(x, 28, 5, YELLOW);
+      }
+      
+    }
+  }
+  else {
+    for(int i = 0; i < 8; i++) {
+      int x = 20 * i + 80 - 10 * 7;
+      if(i == metronome_currentBeat - 1) {
+        display.fillCircle(x, 20, 5, YELLOW);
+      }
+      else {
+        display.drawCircle(x, 20, 5, YELLOW);
+      }
+    }
+    for(int i = 0; i < metronome_beatsPerBar - 8; i++) {
+      int x = 20 * i + 80 - 10 * (metronome_beatsPerBar - 9);\
+      if(i == metronome_currentBeat - 9) {
+        display.fillCircle(x, 37, 5, YELLOW);
+      }
+      else {
+        display.drawCircle(x, 37, 5, YELLOW);
+      }
+    }
+  }
+}

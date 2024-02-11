@@ -124,7 +124,8 @@ void tuner_setup() {
 
 void tuner_loop() {
   // In and out toggle
-  if(digitalRead(1) == LOW) {
+  bounce.update();
+  if(bounce.changed() && bounce.read() == LOW) {
     if(!pageSelected) {
       pageSelected = true;
       notefreqAmp.gain(1);

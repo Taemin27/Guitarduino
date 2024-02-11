@@ -179,7 +179,8 @@ void effects_setup() {
 
 void effects_loop() {
   // Button pressed
-  if (digitalRead(1) == LOW) {
+  bounce.update();
+  if(bounce.changed() && bounce.read() == LOW) {
     switch(ef_currentPage) {
       case home:
         pageSelected = true;
