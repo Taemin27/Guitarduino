@@ -145,6 +145,9 @@ int ef_od_tone = 5;
 int ef_ds_drive = 5;
 int ef_ds_level = 5;
 int ef_ds_tone = 5;
+int ef_fz_drive = 5;
+int ef_fz_level = 5;
+int ef_fz_tone = 5;
 
 // Time-Based effects variables
 bool ef_reverb_on = false;
@@ -666,7 +669,27 @@ void ef_drawDrive() {
 
   // Fuzz
   else if(ef_drive_mode == 2) {
+    if(ef_drive_on) {
+      // Enable DS and apply settings
+      ef_drive_disable();
+
+      overdriveMixer.gain(0, 0);
+      overdriveMixer.gain(1, 0);
+      overdriveMixer.gain(2, 1);
+      
+
+      display.setTextColor(GREEN);
+    }
+    else {
+      ef_drive_disable();
+
+      display.setTextColor(GRAY);
+    }
     
+    mode = "FZ";
+    drive = ef_fz_drive;
+    level = ef_fz_level;
+    tone = ef_fz_tone;
 
   }
 
@@ -741,6 +764,7 @@ void ef_drawDrive() {
 void ef_drive_disable() {
   overdriveMixer.gain(0, 1);
   overdriveMixer.gain(1, 0);
+  overdriveMixer.gain(2, 0);
   overdriveGainAmp.gain(0);
   overdriveLevelAmp.gain(0);
   distortionGainAmp.gain(0);

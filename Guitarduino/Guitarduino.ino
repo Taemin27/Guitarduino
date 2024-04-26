@@ -15,12 +15,13 @@
 #define page4_loop record_loop
 
 // Include Statements
-#include <Adafruit_GFX_Buffer.h>  // https://github.com/vjmuzik/Adafruit_GFX_Buffer.git
+#include <Adafruit_GFX_Buffer.h> // https:github.com/vjmuzik/Adafruit_GFX_Buffer.git
 #include <Adafruit_ST7735.h>
-#include <Adafruit_GFX.h>  // One character at size 1 = 6 * 8 pixels
+#include <Adafruit_GFX.h> // One character at size 1 = 6*8 pixels
 #include <Encoder.h>
 #include <Bounce2.h>
 #include "SystemBitmaps.h"
+
 
 // Audio
 #include <Audio.h>
@@ -30,49 +31,57 @@
 #include <SerialFlash.h>
 
 // GUItool: begin automatically generated code
-AudioSynthWaveformDc dc1;             //xy=251.1999969482422,543
-AudioInputI2S i2s1;                   //xy=258.1999969482422,336
-AudioAmplifier notefreqAmp;           //xy=449.1999969482422,261
-AudioEffectWaveFolder wavefolder1;    //xy=566.2001266479492,523.999981880188
-AudioAmplifier distortionLevelAmp;    //xy=570.2001876831055,599.9999837875366
-AudioMixer4 overdriveMixer;           //xy=571.1999969482422,471
-AudioFilterBiquad overdriveBiquad;    //xy=571.2001266479492,561.9999828338623
-AudioAmplifier distortionGainAmp;     //xy=572.2001304626465,638.9999828338623
-AudioAmplifier overdriveLevelAmp;     //xy=572.2000617980957,681.0000009536743
-AudioAmplifier overdriveGainAmp;      //xy=576.2001266479492,721.9999837875366
-AudioAnalyzeNoteFrequency notefreq1;  //xy=605.1999969482422,263
-AudioAmplifier delayAmp;              //xy=883.1999282836914,610.0000114440918
-AudioMixer4 delayMixer;               //xy=967.1999282836914,476.0000114440918
-AudioEffectDelay delay1;              //xy=1018.1999282836914,633.0000114440918
-AudioMixer4 reverbMixer;              //xy=1292.1999282836914,475.0000114440918
-AudioEffectFreeverb freeverb1;        //xy=1292.1999740600586,526.9999809265137
-AudioAmplifier reverbAmp;             //xy=1296.1999778747559,564.999981880188
-AudioSynthSimpleDrum metronomeDrum;   //xy=1732.4444046020508,441.1111249923706
-AudioMixer4 masterMixer;              //xy=1919.8888702392578,449.1111869812012
-AudioOutputI2S i2s2;                  //xy=2082.1997833251953,443.0000419616699
-AudioConnection patchCord1(dc1, 0, wavefolder1, 1);
-AudioConnection patchCord2(i2s1, 1, notefreqAmp, 0);
-AudioConnection patchCord3(i2s1, 1, overdriveMixer, 0);
-AudioConnection patchCord4(i2s1, 1, overdriveGainAmp, 0);
-AudioConnection patchCord5(notefreqAmp, notefreq1);
-AudioConnection patchCord6(wavefolder1, 0, overdriveMixer, 1);
-AudioConnection patchCord7(distortionLevelAmp, overdriveBiquad);
-AudioConnection patchCord8(overdriveMixer, 0, delayMixer, 0);
-AudioConnection patchCord9(overdriveBiquad, 0, wavefolder1, 0);
-AudioConnection patchCord10(distortionGainAmp, distortionLevelAmp);
-AudioConnection patchCord11(overdriveLevelAmp, distortionGainAmp);
-AudioConnection patchCord12(overdriveGainAmp, overdriveLevelAmp);
-AudioConnection patchCord13(delayAmp, delay1);
-AudioConnection patchCord14(delayMixer, 0, reverbMixer, 0);
-AudioConnection patchCord15(delayMixer, reverbAmp);
-AudioConnection patchCord16(delayMixer, delayAmp);
-AudioConnection patchCord17(delay1, 0, delayMixer, 1);
-AudioConnection patchCord18(reverbMixer, 0, masterMixer, 3);
-AudioConnection patchCord19(freeverb1, 0, reverbMixer, 1);
-AudioConnection patchCord20(reverbAmp, freeverb1);
-AudioConnection patchCord21(metronomeDrum, 0, masterMixer, 2);
-AudioConnection patchCord22(masterMixer, 0, i2s2, 1);
-AudioControlSGTL5000 sgtl5000_1;  //xy=138.1999969482422,336
+AudioSynthWaveformDc     dc1;            //xy=303.6666564941406,677.9999923706055
+AudioInputI2S            i2s1;           //xy=310.6666564941406,470.99999237060547
+AudioAmplifier           notefreqAmp;    //xy=501.6666564941406,395.99999237060547
+AudioEffectWaveshaper    waveshape1;     //xy=505.93334197998047,590.9334487915039
+AudioAnalyzeNoteFrequency notefreq1;      //xy=657.6666564941406,397.99999237060547
+AudioEffectWaveFolder    wavefolder1;    //xy=700.666690826416,644.000057220459
+AudioAmplifier           distortionLevelAmp; //xy=704.666690826416,720.000057220459
+AudioFilterBiquad        overdriveBiquad; //xy=705.666690826416,682.000057220459
+AudioAmplifier           distortionGainAmp; //xy=706.666690826416,759.000057220459
+AudioAmplifier           overdriveLevelAmp; //xy=706.666690826416,802.000057220459
+AudioMixer4              overdriveMixer; //xy=709.666633605957,590.9999923706055
+AudioAmplifier           overdriveGainAmp; //xy=710.666690826416,842.000057220459
+AudioAmplifier           delayAmp;       //xy=935.6666564941406,744.9999923706055
+AudioMixer4              delayMixer;     //xy=1019.6666564941406,610.9999923706055
+AudioEffectDelay         delay1;         //xy=1070.6666564941406,767.9999923706055
+AudioMixer4              reverbMixer;    //xy=1344.6666564941406,609.9999923706055
+AudioEffectFreeverb      freeverb1;      //xy=1344.6666564941406,660.9999923706055
+AudioAmplifier           reverbAmp;      //xy=1348.6666564941406,698.9999923706055
+AudioPlaySdWav           playSdWav1;     //xy=1473.3333549499512,432.66669273376465
+AudioSynthSimpleDrum     metronomeDrum;  //xy=1633.6667098999023,536.9999752044678
+AudioMixer4              playSDMixer;         //xy=1688.3333892822266,442.66669273376465
+AudioMixer4              masterMixer;    //xy=1971.6666564941406,583.9999923706055
+AudioOutputI2S           i2s2;           //xy=2134.6666564941406,577.9999923706055
+AudioConnection          patchCord1(dc1, 0, wavefolder1, 1);
+AudioConnection          patchCord2(i2s1, 1, notefreqAmp, 0);
+AudioConnection          patchCord3(i2s1, 1, overdriveMixer, 0);
+AudioConnection          patchCord4(i2s1, 1, overdriveGainAmp, 0);
+AudioConnection          patchCord5(i2s1, 1, waveshape1, 0);
+AudioConnection          patchCord6(notefreqAmp, notefreq1);
+AudioConnection          patchCord7(waveshape1, 0, overdriveMixer, 2);
+AudioConnection          patchCord8(wavefolder1, 0, overdriveMixer, 1);
+AudioConnection          patchCord9(distortionLevelAmp, overdriveBiquad);
+AudioConnection          patchCord10(overdriveBiquad, 0, wavefolder1, 0);
+AudioConnection          patchCord11(distortionGainAmp, distortionLevelAmp);
+AudioConnection          patchCord12(overdriveLevelAmp, distortionGainAmp);
+AudioConnection          patchCord13(overdriveMixer, 0, delayMixer, 0);
+AudioConnection          patchCord14(overdriveGainAmp, overdriveLevelAmp);
+AudioConnection          patchCord15(delayAmp, delay1);
+AudioConnection          patchCord16(delayMixer, 0, reverbMixer, 0);
+AudioConnection          patchCord17(delayMixer, reverbAmp);
+AudioConnection          patchCord18(delayMixer, delayAmp);
+AudioConnection          patchCord19(delay1, 0, delayMixer, 1);
+AudioConnection          patchCord20(reverbMixer, 0, masterMixer, 3);
+AudioConnection          patchCord21(freeverb1, 0, reverbMixer, 1);
+AudioConnection          patchCord22(reverbAmp, freeverb1);
+AudioConnection          patchCord23(playSdWav1, 0, playSDMixer, 0);
+AudioConnection          patchCord24(playSdWav1, 1, playSDMixer, 1);
+AudioConnection          patchCord25(metronomeDrum, 0, masterMixer, 2);
+AudioConnection          patchCord26(playSDMixer, 0, masterMixer, 1);
+AudioConnection          patchCord27(masterMixer, 0, i2s2, 1);
+AudioControlSGTL5000     sgtl5000_1;     //xy=190.66665649414062,470.99999237060547
 // GUItool: end automatically generated code
 
 
@@ -116,6 +125,16 @@ int metronome_bpm = 100;
 int metronome_beatsPerBar = 4;
 int metronome_currentBeat = 0;
 
+// BackingTrack global variables
+std::vector<String> backingTrack_files;
+
+float fuzzWaveshape[] = {-1.0, 1.0, -1.0};
+
+// SD
+#define SDCARD_CS_PIN    10
+#define SDCARD_MOSI_PIN  7
+#define SDCARD_SCK_PIN   14
+
 
 void setup() {
   AudioNoInterrupts();
@@ -143,6 +162,21 @@ void setup() {
   masterMixer.gain(2, 1);
   masterMixer.gain(3, 1);
 
+
+  /* SD */
+  SPI.setMOSI(SDCARD_MOSI_PIN);
+  SPI.setSCK(SDCARD_SCK_PIN);
+  if (!(SD.begin(SDCARD_CS_PIN))) {
+    display.fillScreen(BLACK);
+    display.drawBitmap(0, 0, noSDCard, 160, 80, WHITE);
+    display.display();
+    while (1) {
+      Serial.println("Unable to access the SD card");
+      delay(500);
+    }
+  }
+  
+
   /* Tuner */
   notefreqAmp.gain(0);
   notefreq1.begin(0.15);
@@ -150,6 +184,7 @@ void setup() {
   /* Effects */
   //Drive
   dc1.amplitude(0.1);
+  waveshape1.shape(fuzzWaveshape, 3);
   ef_drive_disable();
 
   //Delay
@@ -171,7 +206,19 @@ void setup() {
   metronomeDrum.pitchMod(0.5);
   metronomeDrum.length(50);
 
-
+  /* BackingTrack*/
+  File backingTrackDir = SD.open("backingtracks");
+  while(1) {
+    File entry = backingTrackDir.openNextFile();
+    if(!entry) {
+      break;
+    }
+    if(!entry.isDirectory()) {
+      backingTrack_files.push_back(entry.name());
+      Serial.println(entry.name());
+    }
+    entry.close();
+  }
 
   AudioInterrupts();
 
@@ -181,7 +228,7 @@ void setup() {
 int previousMemoryUsage = 0;
 
 void loop() {
-  printAudioMemoryUsage();
+  //printAudioMemoryUsage();
 
   switch (currentPage) {
     case 0:

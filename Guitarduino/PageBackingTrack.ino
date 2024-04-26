@@ -102,6 +102,14 @@ const unsigned char backingTrackHome [] PROGMEM = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
 
+int backingTrack_cursorLoc = 0;
+bool backingTrack_valueSelected = false;
+
+bool backingTrack_on = false;
+bool backingTrack_pause = false;
+int backingTrack_fileIndex = 0;
+int backingTrack_currentSec = 0;
+
 void backingTrack_setup() {
   display.fillScreen(BLACK);
   display.drawBitmap(0, 0, backingTrackHome, 160, 80, WHITE);
@@ -110,6 +118,98 @@ void backingTrack_setup() {
 }
 
 void backingTrack_loop() {
-  
+  bounce.update();
+  if(bounce.changed() && bounce.read() == LOW) {
+    if(!pageSelected) {
+      pageSelected = true;
+      playSdWav1.play("ENTER.WAV");
+      backingTrack_refresh();
+    }
+    else if(pageSelected) {
+      switch(backingTrack_cursorLoc) {
+        case 0:
+          pageSelected = false;
+          backingTrack_setup();
+          break;
+        case 1:
+          if(backingTrack_pause) {
+            
+          }
+          break;
+        default:
+          
+          break;
+      }
+    }
+  }
+
+  if (pageSelected) {
+    // Encoder
+    int encoder = readEncoder();
+    if(encoder == 0) {
+      
+    }
+    else {
+      // Right
+      if(encoder == 1) {
+        if(backingTrack_valueSelected) {
+          switch(backingTrack_cursorLoc) {
+            case 1:
+              
+              break;
+          }
+        }
+        else {
+          if(backingTrack_cursorLoc < 3) {
+            backingTrack_cursorLoc ++;
+          }
+        }
+      }
+
+      // Left
+      else if(encoder == -1) {
+        if(backingTrack_valueSelected) {
+          switch(backingTrack_cursorLoc) {
+            case 1:
+              
+              break;
+          }
+        }
+        else {
+          if(backingTrack_cursorLoc > 0) {
+            backingTrack_cursorLoc --;
+          }
+        }
+      }
+      backingTrack_refresh();
+      display.display();
+    }
+  }
 }
 
+
+void backingTrack_refresh() {
+  display.fillScreen(BLACK);
+  display.setTextColor(WHITE, BLACK);
+  display.setTextSize(1);
+
+  display.setCursor(0, 0);
+  display.print("<<< File: ");
+  if (!backingTrack_files.empty()) {
+    display.println(backingTrack_files[backingTrack_fileIndex]);
+  }
+
+  if (backingTrack_on) {
+    display.fillRect(10, 15, 4, 16, WHITE);
+    display.fillRect(19, 15, 4, 16, WHITE);
+  }
+  else {
+    display.fillTriangle(9, 15, 9, 31, 24, 23, WHITE);
+  }
+  
+  display.display();
+}
+
+void backingTrack_drawProgressBar() {
+
+}
