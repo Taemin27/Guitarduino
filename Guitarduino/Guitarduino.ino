@@ -105,7 +105,7 @@ const uint16_t YELLOW = 0xffe0;
 const uint16_t GREEN = 0x07e0;
 
 // Encoder
-Encoder enc(2, 3);
+Encoder enc(3, 2);
 long oldPosition = 0;
 
 const int buttonPin = 1;
