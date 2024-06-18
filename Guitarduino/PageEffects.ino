@@ -136,6 +136,11 @@ int ef_maxCursorLoc = 0;
 bool ef_valueSelected = false;
 
 
+// Dynamic effects variables
+
+
+
+
 // Drive effects variables
 bool ef_drive_on = false;
 int ef_drive_mode = 0;    // 0: Overdrive, 1: Distortion, 2: Fuzz
@@ -163,6 +168,8 @@ int ef_delay_level = 7;
 enum Ef_pages {
   home,
   typeMenu,
+    dynamic,
+      compressorSettings,
     driveSettings,
     timeBased,
       delaySettings,
@@ -199,6 +206,12 @@ void effects_loop() {
             ef_currentPage = home;
             effects_setup();
             break;
+          case 2:
+            ef_currentPage = dynamic;
+            ef_cursorLoc = 0;
+            ef_drawDynamic();
+            display.display();
+            break;
           case 4:
             ef_currentPage = driveSettings;
             ef_cursorLoc = 0;
@@ -213,6 +226,45 @@ void effects_loop() {
             break;
         }
         break;
+
+      // Menus under dymanic
+      case dynamic:
+        switch(ef_cursorLoc) {
+          case 0:
+            ef_currentPage = typeMenu;
+            ef_cursorLoc = 2;
+            ef_drawTypeMenu();
+            display.display();
+            break;
+          case 1:
+            ef_currentPage = compressorSettings;
+            ef_cursorLoc = 0;
+            ef_drawCompressor();
+            display.display();
+            break;
+        }
+        break;
+
+        case compressorSettings:
+          switch(ef_cursorLoc) {
+            case 0:
+              ef_currentPage = dynamic;
+              ef_cursorLoc = 1;
+              ef_drawDynamic();
+              display.display();
+              break;
+            case 1:
+              ef_compressor_on = !ef_compressor_on;
+              ef_drawCompressor();
+              display.display();
+              break;
+            default:
+              ef_valueSelected = !ef_valueSelected;
+              ef_drawCompressor();
+              display.display();
+              break;
+          }
+          break;
 
       // Drive menu
       case driveSettings:
@@ -318,6 +370,24 @@ void effects_loop() {
         if (ef_valueSelected) {
           switch(ef_currentPage) {
 
+            case compressorSettings:
+              if(ef_cursorLoc == 2) {
+                if(ef_compressor_level < 10) {
+                  ef_compressor_level ++;
+                }
+              }
+              else if(ef_cursorLoc == 3) {
+                if(ef_compressor_threshold < 10) {
+                  ef_compressor_threshold ++;
+                }
+              }
+              else if(ef_cursorLoc == 4) {
+                if(ef_compressor_release < 10) {
+                  ef_compressor_release ++;
+                }
+              }
+              break;
+
             case driveSettings:
               // OD
               if(ef_drive_mode == 0) {
@@ -422,6 +492,24 @@ void effects_loop() {
         if (ef_valueSelected) {
           switch(ef_currentPage) {
 
+            case compressorSettings:
+              if(ef_cursorLoc == 2) {
+                if(ef_compressor_level > 0) {
+                  ef_compressor_level --;
+                }
+              }
+              else if(ef_cursorLoc == 3) {
+                if(ef_compressor_threshold > 0) {
+                  ef_compressor_threshold --;
+                }
+              }
+              else if(ef_cursorLoc == 4) {
+                if(ef_compressor_release > 0) {
+                  ef_compressor_release --;
+                }
+              }
+              break;
+
             case driveSettings:
               // OD
               if(ef_drive_mode == 0) {
@@ -523,6 +611,14 @@ void effects_loop() {
           ef_drawTypeMenu();
           break;
 
+          case dynamic:
+            ef_drawDynamic();
+            break;
+            
+            case compressorSettings:
+              ef_drawCompressor();
+              break;
+
           case driveSettings:
             ef_drawDrive();
             break;
@@ -595,6 +691,120 @@ void ef_drawTypeMenu() {
       display.setCursor(0, 16);
       display.print("Time-Based");
       break;
+  }
+}
+
+void ef_drawDynamic() {
+  ef_maxCursorLoc = 3;
+
+  display.fillScreen(BLACK);
+  display.setTextSize(2);
+  display.setTextColor(WHITE, BLACK);
+  display.setCursor(0, 0);
+  display.println("<<< Dynamic");
+  display.println("Compressor");
+  display.println("Wah Wah");
+  display.println("EQ");
+
+  display.setTextColor(BLUE);
+  switch(ef_cursorLoc) {
+    case 0:
+      display.setCursor(0, 0);
+      display.print("<<<");
+      break;
+    case 1:
+      display.setCursor(0, 16);
+      display.print("Compressor");
+      break;
+    case 2:
+      display.setCursor(0, 32);
+      display.print("Wah Wah");
+      break;
+    case 3:
+      display.setCursor(0, 48);
+      display.print("EQ");
+      break;
+  }
+}
+
+void ef_drawCompressor() {
+  ef_maxCursorLoc = 4;
+
+  display.fillScreen(BLACK);
+  display.setTextSize(2);
+  display.setTextColor(WHITE);
+  display.setCursor(0, 0);
+  display.print("<<<");
+  // Compressor on/off
+  if (ef_compressor_on) {
+    // Enable compressor and apply settings
+    compressorLevelAmp.gain(1 + float(ef_compressor_level) / 10);
+    ef_compressor_maxRelease = 1000 * (float(ef_compressor_release) / 10); // Change the hardcoded value if adjustment is needed
+    display.setTextColor(GREEN);
+  }
+  else {
+    // Disable compressor
+    compressorAmp.gain(1);
+    compressorLevelAmp.gain(1);
+    display.setTextColor(GRAY);
+  }
+
+  display.println("Compressor");
+  display.setTextColor(WHITE);
+
+  // Parameters
+  display.println("Level      " + String(ef_compressor_level));
+  display.println("Threshold  " + String(ef_compressor_threshold));
+  display.println("Release    " + String(ef_compressor_release));
+
+  // Cursor on parameter value
+  display.setTextColor(BLUE);
+  if (ef_valueSelected) {
+    switch(ef_cursorLoc) {
+      case 2:
+        display.setCursor(132, 16);
+        display.print(String(ef_compressor_level));
+        break;
+      case 3:
+        display.setCursor(132, 32);
+        display.print(ef_compressor_threshold);
+        break;
+      case 4:
+        display.setCursor(132, 48);
+        display.print(ef_compressor_release);
+        break;
+    }
+  }
+  // Cursor on parameter name
+  else {
+    switch(ef_cursorLoc) {
+      case 0:
+        display.setCursor(0, 0);
+        display.print("<<<");
+        break;
+      case 1:
+        if (ef_compressor_on) {
+          display.setTextColor(GREEN, WHITE);
+        }
+        else {
+          display.setTextColor(GRAY, WHITE);
+        }
+        display.setCursor(36, 0);
+        display.print("Compressor");
+        break;
+      case 2:
+        display.setCursor(0, 16);
+        display.print("Level");
+        break;
+      case 3:
+        display.setCursor(0, 32);
+        display.print("Threshold");
+        break;
+      case 4:
+        display.setCursor(0, 48);
+        display.print("Release");
+        break;
+    }
   }
 }
 
@@ -770,7 +980,6 @@ void ef_drive_disable() {
   distortionGainAmp.gain(0);
   distortionLevelAmp.gain(0);
 }
-
 
 void ef_drawTimeBased() {
   ef_maxCursorLoc = 2;

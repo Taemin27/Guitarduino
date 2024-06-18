@@ -21,7 +21,7 @@
 #include <Encoder.h>
 #include <Bounce2.h>
 #include "SystemBitmaps.h"
-
+#include <vector>
 
 // Audio
 #include <Audio.h>
@@ -31,58 +31,68 @@
 #include <SerialFlash.h>
 
 // GUItool: begin automatically generated code
-AudioSynthWaveformDc     dc1;            //xy=303.6666564941406,677.9999923706055
-AudioInputI2S            i2s1;           //xy=310.6666564941406,470.99999237060547
-AudioAmplifier           notefreqAmp;    //xy=501.6666564941406,395.99999237060547
-AudioEffectWaveshaper    waveshape1;     //xy=505.93334197998047,590.9334487915039
-AudioAnalyzeNoteFrequency notefreq1;      //xy=657.6666564941406,397.99999237060547
-AudioEffectWaveFolder    wavefolder1;    //xy=700.666690826416,644.000057220459
-AudioAmplifier           distortionLevelAmp; //xy=704.666690826416,720.000057220459
-AudioFilterBiquad        overdriveBiquad; //xy=705.666690826416,682.000057220459
-AudioAmplifier           distortionGainAmp; //xy=706.666690826416,759.000057220459
-AudioAmplifier           overdriveLevelAmp; //xy=706.666690826416,802.000057220459
-AudioMixer4              overdriveMixer; //xy=709.666633605957,590.9999923706055
-AudioAmplifier           overdriveGainAmp; //xy=710.666690826416,842.000057220459
-AudioAmplifier           delayAmp;       //xy=935.6666564941406,744.9999923706055
-AudioMixer4              delayMixer;     //xy=1019.6666564941406,610.9999923706055
-AudioEffectDelay         delay1;         //xy=1070.6666564941406,767.9999923706055
-AudioMixer4              reverbMixer;    //xy=1344.6666564941406,609.9999923706055
-AudioEffectFreeverb      freeverb1;      //xy=1344.6666564941406,660.9999923706055
-AudioAmplifier           reverbAmp;      //xy=1348.6666564941406,698.9999923706055
-AudioPlaySdWav           playSdWav1;     //xy=1473.3333549499512,432.66669273376465
-AudioSynthSimpleDrum     metronomeDrum;  //xy=1633.6667098999023,536.9999752044678
-AudioMixer4              playSDMixer;         //xy=1688.3333892822266,442.66669273376465
-AudioMixer4              masterMixer;    //xy=1971.6666564941406,583.9999923706055
-AudioOutputI2S           i2s2;           //xy=2134.6666564941406,577.9999923706055
-AudioConnection          patchCord1(dc1, 0, wavefolder1, 1);
-AudioConnection          patchCord2(i2s1, 1, notefreqAmp, 0);
-AudioConnection          patchCord3(i2s1, 1, overdriveMixer, 0);
-AudioConnection          patchCord4(i2s1, 1, overdriveGainAmp, 0);
-AudioConnection          patchCord5(i2s1, 1, waveshape1, 0);
-AudioConnection          patchCord6(notefreqAmp, notefreq1);
-AudioConnection          patchCord7(waveshape1, 0, overdriveMixer, 2);
-AudioConnection          patchCord8(wavefolder1, 0, overdriveMixer, 1);
-AudioConnection          patchCord9(distortionLevelAmp, overdriveBiquad);
-AudioConnection          patchCord10(overdriveBiquad, 0, wavefolder1, 0);
-AudioConnection          patchCord11(distortionGainAmp, distortionLevelAmp);
-AudioConnection          patchCord12(overdriveLevelAmp, distortionGainAmp);
+AudioInputI2S            i2s1;           //xy=254.66665649414062,447.99999237060547
+AudioAmplifier           notefreqAmp;    //xy=443.6666717529297,174.00000953674316
+AudioAnalyzeNoteFrequency notefreq1;      //xy=599.6666717529297,176.00000953674316
+AudioAmplifier           compressorAmp;           //xy=601.6667022705078,464.66676235198975
+AudioAnalyzePeak         compressorPeak;          //xy=614.6666946411133,534.6667499542236
+AudioAmplifier           compressorLevelAmp;           //xy=807.6667709350586,464.66676235198975
+AudioAnalyzePeak         peak2;          //xy=877.8062591552734,698.8250045776367
+AudioSynthWaveformDc     dc1;            //xy=1120.6667823791504,531.0000152587891
+AudioEffectWaveshaper    waveshape1;     //xy=1134.6667823791504,489.00001335144043
+AudioEffectWaveFolder    wavefolder1;    //xy=1318.666790008545,516.0000133514404
+AudioMixer4              overdriveMixer; //xy=1321.6667709350586,462.00001335144043
+AudioAmplifier           distortionLevelAmp; //xy=1322.666790008545,592.0000133514404
+AudioFilterBiquad        overdriveBiquad; //xy=1323.666790008545,554.0000133514404
+AudioAmplifier           distortionGainAmp; //xy=1324.666790008545,631.0000133514404
+AudioAmplifier           overdriveLevelAmp; //xy=1324.666790008545,674.0000133514404
+AudioAmplifier           overdriveGainAmp; //xy=1328.666790008545,714.0000133514404
+AudioAmplifier           delayAmp;       //xy=1553.666790008545,616.0000133514404
+AudioMixer4              delayMixer;     //xy=1637.666790008545,482.00001335144043
+AudioEffectDelay         delay1;         //xy=1844.666790008545,654.0000133514404
+AudioMixer4              reverbMixer;    //xy=1962.666790008545,481.00001335144043
+AudioEffectFreeverb      freeverb1;      //xy=1962.666790008545,532.0000133514404
+AudioAmplifier           reverbAmp;      //xy=1966.666790008545,570.0000133514404
+AudioPlaySdWav           playSdWav1;     //xy=1986.6666870117188,303.99999809265137
+AudioSynthSimpleDrum     metronomeDrum;  //xy=2146.6666870117188,407.99999809265137
+AudioMixer4              playSDMixer;    //xy=2201.6666870117188,313.99999809265137
+AudioMixer4              masterMixer;    //xy=2484.6666870117188,454.99999809265137
+AudioOutputI2S           i2s2;           //xy=2647.6666870117188,448.99999809265137
+AudioConnection          patchCord1(i2s1, 0, notefreqAmp, 0);
+AudioConnection          patchCord2(i2s1, 0, compressorAmp, 0);
+AudioConnection          patchCord3(i2s1, 0, compressorPeak, 0);
+AudioConnection          patchCord4(notefreqAmp, notefreq1);
+AudioConnection          patchCord5(compressorAmp, compressorLevelAmp);
+AudioConnection          patchCord6(compressorLevelAmp, waveshape1);
+AudioConnection          patchCord7(compressorLevelAmp, 0, overdriveMixer, 0);
+AudioConnection          patchCord8(compressorLevelAmp, overdriveGainAmp);
+AudioConnection          patchCord9(compressorLevelAmp, peak2);
+AudioConnection          patchCord10(dc1, 0, wavefolder1, 1);
+AudioConnection          patchCord11(waveshape1, 0, overdriveMixer, 2);
+AudioConnection          patchCord12(wavefolder1, 0, overdriveMixer, 1);
 AudioConnection          patchCord13(overdriveMixer, 0, delayMixer, 0);
-AudioConnection          patchCord14(overdriveGainAmp, overdriveLevelAmp);
-AudioConnection          patchCord15(delayAmp, delay1);
-AudioConnection          patchCord16(delayMixer, 0, reverbMixer, 0);
-AudioConnection          patchCord17(delayMixer, reverbAmp);
-AudioConnection          patchCord18(delayMixer, delayAmp);
-AudioConnection          patchCord19(delay1, 0, delayMixer, 1);
-AudioConnection          patchCord20(reverbMixer, 0, masterMixer, 3);
-AudioConnection          patchCord21(freeverb1, 0, reverbMixer, 1);
-AudioConnection          patchCord22(reverbAmp, freeverb1);
-AudioConnection          patchCord23(playSdWav1, 0, playSDMixer, 0);
-AudioConnection          patchCord24(playSdWav1, 1, playSDMixer, 1);
-AudioConnection          patchCord25(metronomeDrum, 0, masterMixer, 2);
-AudioConnection          patchCord26(playSDMixer, 0, masterMixer, 1);
-AudioConnection          patchCord27(masterMixer, 0, i2s2, 1);
-AudioControlSGTL5000     sgtl5000_1;     //xy=190.66665649414062,470.99999237060547
+AudioConnection          patchCord14(distortionLevelAmp, overdriveBiquad);
+AudioConnection          patchCord15(overdriveBiquad, 0, wavefolder1, 0);
+AudioConnection          patchCord16(distortionGainAmp, distortionLevelAmp);
+AudioConnection          patchCord17(overdriveLevelAmp, distortionGainAmp);
+AudioConnection          patchCord18(overdriveGainAmp, overdriveLevelAmp);
+AudioConnection          patchCord19(delayAmp, delay1);
+AudioConnection          patchCord20(delayMixer, 0, reverbMixer, 0);
+AudioConnection          patchCord21(delayMixer, reverbAmp);
+AudioConnection          patchCord22(delayMixer, delayAmp);
+AudioConnection          patchCord23(delay1, 0, delayMixer, 1);
+AudioConnection          patchCord24(reverbMixer, 0, masterMixer, 3);
+AudioConnection          patchCord25(freeverb1, 0, reverbMixer, 1);
+AudioConnection          patchCord26(reverbAmp, freeverb1);
+AudioConnection          patchCord27(playSdWav1, 0, playSDMixer, 0);
+AudioConnection          patchCord28(playSdWav1, 1, playSDMixer, 1);
+AudioConnection          patchCord29(metronomeDrum, 0, masterMixer, 2);
+AudioConnection          patchCord30(playSDMixer, 0, masterMixer, 1);
+AudioConnection          patchCord31(masterMixer, 0, i2s2, 0);
+AudioControlSGTL5000     sgtl5000_1;     //xy=220.66665649414062,362.99999237060547
 // GUItool: end automatically generated code
+
+
 
 
 
@@ -116,6 +126,18 @@ Bounce bounce = Bounce();
 int currentPage = 0;
 int pageCount = 4;
 bool pageSelected = false;
+
+// Compressor global variables
+bool ef_compressor_on = false;
+int ef_compressor_level = 0;
+int ef_compressor_threshold = 10;
+int ef_compressor_release = 0;
+float ef_compressor_maxRelease = 0;
+float ef_compressor_releaseMillis = 0;
+float ef_compressor_previousMillis = 0; 
+float ef_compressor_previousPeak = 0;
+const float ef_compressor_thresholdMax = 0.35;  //Adjust if needed (use compressorPeak.read() to find the right value)
+const float ef_compressor_ratio = 0.125;
 
 
 // Metronome global variables
@@ -182,6 +204,10 @@ void setup() {
   notefreq1.begin(0.15);
 
   /* Effects */
+  //Dynamic
+  compressorAmp.gain(1);
+  compressorLevelAmp.gain(1);
+
   //Drive
   dc1.amplitude(0.1);
   waveshape1.shape(fuzzWaveshape, 3);
@@ -229,7 +255,6 @@ int previousMemoryUsage = 0;
 
 void loop() {
   //printAudioMemoryUsage();
-
   switch (currentPage) {
     case 0:
       page0_loop();
@@ -255,6 +280,35 @@ void loop() {
     }
   }
 
+  // Compressor
+  if (ef_compressor_on && compressorPeak.available()) {
+    float peak = compressorPeak.read();
+    //Serial.println(ef_compressor_thresholdMax * (float(ef_compressor_threshold) / 10));
+    float threshold =  ef_compressor_thresholdMax * (float(ef_compressor_threshold) / 10);
+    if(peak > threshold) {
+      float reduction = ((peak - threshold) * ef_compressor_ratio + threshold) / peak;
+
+      if(peak > ef_compressor_previousPeak) {
+        ef_compressor_releaseMillis = ef_compressor_maxRelease;
+      }
+
+      if(ef_compressor_releaseMillis > 0) {
+        float currentMillis = millis();
+        if(currentMillis - ef_compressor_previousMillis >= 10) {
+          ef_compressor_releaseMillis += currentMillis - ef_compressor_previousMillis;
+          if(ef_compressor_releaseMillis > ef_compressor_maxRelease) {
+            ef_compressor_releaseMillis = ef_compressor_maxRelease;
+          }
+          reduction = reduction + (1 - reduction) * (ef_compressor_releaseMillis / ef_compressor_maxRelease);
+          ef_compressor_previousMillis = currentMillis;
+        }
+      }
+      compressorAmp.gain(reduction);
+      
+      Serial.println("Peak: " + String(peak) + " Threshold: " + String(threshold) + " Gain: " + String(reduction) + " NewPeak: " + String(peak2.read()));
+
+    }
+  }
 
   // Metronome
   if (metronome_on) {
