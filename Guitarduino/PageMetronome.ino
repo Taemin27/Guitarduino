@@ -143,11 +143,6 @@ void metronome_loop() {
   
 
   if (pageSelected) {
-    
-
-
-
-
     // Encoder
     int encoder = readEncoder();
     if(encoder == 0) {

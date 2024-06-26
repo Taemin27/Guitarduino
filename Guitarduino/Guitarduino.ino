@@ -113,6 +113,7 @@ const uint16_t BLUE = 0x001f;
 const uint16_t RED = 0xF800;
 const uint16_t YELLOW = 0xffe0;
 const uint16_t GREEN = 0x07e0;
+const uint16_t BOOT = 0x0617;
 
 // Encoder
 Encoder enc(3, 2);
@@ -170,6 +171,10 @@ void setup() {
   display.initR(INITR_MINI160x80);
   display.setRotation(3);
   display.invertDisplay(true);
+  display.drawBitmap(0, 0, Boot, 160, 80, BOOT);
+  display.display();
+  delay(1000);
+
 
   /* Audio */
   AudioMemory(700);
@@ -281,33 +286,37 @@ void loop() {
   }
 
   // Compressor
-  if (ef_compressor_on && compressorPeak.available()) {
-    float peak = compressorPeak.read();
-    //Serial.println(ef_compressor_thresholdMax * (float(ef_compressor_threshold) / 10));
-    float threshold =  ef_compressor_thresholdMax * (float(ef_compressor_threshold) / 10);
-    if(peak > threshold) {
-      float reduction = ((peak - threshold) * ef_compressor_ratio + threshold) / peak;
+  if(ef_compressor_on) {
+    float reduction = 1;
+    if (compressorPeak.available()) {
+      float peak = compressorPeak.read();
+      //Serial.println(ef_compressor_thresholdMax * (float(ef_compressor_threshold) / 10));
+      float threshold =  ef_compressor_thresholdMax * (float(ef_compressor_threshold) / 10);
+      if(peak > threshold) {
+        reduction = ((peak - threshold) * ef_compressor_ratio + threshold) / peak;
 
-      if(peak > ef_compressor_previousPeak) {
-        ef_compressor_releaseMillis = ef_compressor_maxRelease;
-      }
-
-      if(ef_compressor_releaseMillis > 0) {
-        float currentMillis = millis();
-        if(currentMillis - ef_compressor_previousMillis >= 10) {
-          ef_compressor_releaseMillis += currentMillis - ef_compressor_previousMillis;
-          if(ef_compressor_releaseMillis > ef_compressor_maxRelease) {
-            ef_compressor_releaseMillis = ef_compressor_maxRelease;
-          }
-          reduction = reduction + (1 - reduction) * (ef_compressor_releaseMillis / ef_compressor_maxRelease);
-          ef_compressor_previousMillis = currentMillis;
+        if(peak > ef_compressor_previousPeak) {
+          ef_compressor_releaseMillis = ef_compressor_maxRelease;
         }
-      }
-      compressorAmp.gain(reduction);
-      
-      Serial.println("Peak: " + String(peak) + " Threshold: " + String(threshold) + " Gain: " + String(reduction) + " NewPeak: " + String(peak2.read()));
 
+        if(ef_compressor_releaseMillis > 0) {
+          float currentMillis = millis();
+          if(currentMillis - ef_compressor_previousMillis >= 10) {
+            ef_compressor_releaseMillis += currentMillis - ef_compressor_previousMillis;
+            if(ef_compressor_releaseMillis > ef_compressor_maxRelease) {
+              ef_compressor_releaseMillis = ef_compressor_maxRelease;
+            }
+            reduction = reduction + (1 - reduction) * (ef_compressor_releaseMillis / ef_compressor_maxRelease);
+            ef_compressor_previousMillis = currentMillis;
+          }
+        }
+        compressorAmp.gain(reduction);
+        
+        Serial.println("Peak: " + String(peak) + " Threshold: " + String(threshold) + " Gain: " + String(reduction) + " NewPeak: " + String(peak2.read()));
+
+      }
     }
+    compressorAmp.gain(reduction);  
   }
 
   // Metronome

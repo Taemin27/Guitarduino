@@ -112,3 +112,7 @@ void record_setup()  {
 void record_loop() {
   
 }
+
+void record_refresh() {
+
+}
