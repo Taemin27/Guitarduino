@@ -154,6 +154,13 @@ int ef_fz_drive = 5;
 int ef_fz_level = 5;
 int ef_fz_tone = 5;
 
+// Modulation effects variables
+bool ef_chorus_on = false;
+int ef_chorus_depth = 5;
+int ef_chorus_rate = 5;
+int ef_chorus_mix = 10;
+
+
 // Time-Based effects variables
 bool ef_reverb_on = false;
 int ef_reverb_roomSize = 5;
@@ -171,9 +178,12 @@ enum Ef_pages {
     dynamic,
       compressorSettings,
     driveSettings,
+    modulation,
+      chorusSettings,
     timeBased,
       delaySettings,
       reverbSettings
+    
 };
 
 
@@ -216,6 +226,12 @@ void effects_loop() {
             ef_currentPage = driveSettings;
             ef_cursorLoc = 0;
             ef_drawDrive();
+            display.display();
+            break;
+          case 5:
+            ef_currentPage = modulation;
+            ef_cursorLoc = 0;
+            ef_drawModulation();
             display.display();
             break;
           case 6:
@@ -288,6 +304,44 @@ void effects_loop() {
         }
         break;
 
+      // Menus under modulation
+      case modulation:
+        switch(ef_cursorLoc) {
+          case 0:
+            ef_currentPage = typeMenu;
+            ef_cursorLoc = 0;
+            ef_drawTypeMenu();
+            display.display();
+            break;
+          case 1:
+            ef_currentPage = chorusSettings;
+            ef_cursorLoc = 0;
+            ef_drawChorus();
+            display.display();
+            break;
+        }
+        break;
+        case chorusSettings:
+          switch(ef_cursorLoc) {
+            case 0:
+              ef_currentPage = modulation;
+              ef_cursorLoc = 1;
+              ef_drawModulation();
+              display.display();
+              break;
+            case 1:
+              ef_chorus_on = !ef_chorus_on;
+              ef_drawChorus();
+              display.display();
+              break;
+            default:
+              ef_valueSelected = !ef_valueSelected;
+              ef_drawChorus();
+              display.display();
+              break;
+          }
+          break;
+    
       // Menus under time-based
       case timeBased:
         switch(ef_cursorLoc) {
@@ -438,6 +492,24 @@ void effects_loop() {
 
               }
               break;
+            
+            case chorusSettings:
+              if (ef_cursorLoc == 2) {
+                if(ef_chorus_depth < 10) {
+                  ef_chorus_depth ++;
+                }
+              }
+              else if (ef_cursorLoc == 3) {
+                if(ef_chorus_rate < 10) {
+                  ef_chorus_rate ++;
+                }
+              }
+              else if (ef_cursorLoc == 4) {
+                if(ef_chorus_mix < 10) {
+                  ef_chorus_mix ++;
+                }
+              }
+              break;
 
             case delaySettings:
               if (ef_cursorLoc == 2) {
@@ -558,6 +630,24 @@ void effects_loop() {
               }
               break;
 
+            case chorusSettings:
+              if (ef_cursorLoc == 2) {
+                if(ef_chorus_depth > 0) {
+                  ef_chorus_depth --;
+                }
+              }
+              else if (ef_cursorLoc == 3) {
+                if(ef_chorus_rate > 0) {
+                  ef_chorus_rate --;
+                }
+              }
+              else if (ef_cursorLoc == 4) {
+                if(ef_chorus_mix > 0) {
+                  ef_chorus_mix --;
+                }
+              }
+              break;
+
             case delaySettings:
               if(ef_cursorLoc == 2) {
                 if  (ef_delay_time >= 0.01) {
@@ -621,6 +711,14 @@ void effects_loop() {
 
           case driveSettings:
             ef_drawDrive();
+            break;
+          
+          case modulation:
+            ef_drawModulation();
+            break;
+
+            case chorusSettings:
+            ef_drawChorus();
             break;
 
           case timeBased:
@@ -739,7 +837,7 @@ void ef_drawCompressor() {
   if (ef_compressor_on) {
     // Enable compressor and apply settings
     compressorLevelAmp.gain(1 + float(ef_compressor_level) / 10);
-    ef_compressor_maxRelease = 1000 * (float(ef_compressor_release) / 10); // Change the hardcoded value if adjustment is needed
+    //ef_compressor_maxRelease = 1000 * (float(ef_compressor_release) / 10); // Change the hardcoded value if adjustment is needed
     display.setTextColor(GREEN);
   }
   else {
@@ -980,6 +1078,125 @@ void ef_drive_disable() {
   distortionGainAmp.gain(0);
   distortionLevelAmp.gain(0);
 }
+
+void ef_drawModulation() {
+  ef_maxCursorLoc = 3;
+  
+  display.fillScreen(BLACK);
+  display.setTextSize(2);
+  display.setTextColor(WHITE, BLACK);
+  display.setCursor(0, 0);
+  display.println("<<<Modulation");
+  display.println("Chorus");
+  display.println("Phaser");
+  display.println("Flanger");
+
+  display.setTextColor(BLUE);
+  switch(ef_cursorLoc) {
+    case 0:
+      display.setCursor(0, 0);
+      display.print("<<<");
+      break;
+    case 1:
+      display.setCursor(0, 16);
+      display.print("Chorus");
+      break;
+    case 2:
+      display.setCursor(0, 32);
+      display.print("Phaser");
+      break;
+    case 3:
+      display.setCursor(0, 48);
+      display.print("Flanger");
+  }
+}
+
+void ef_drawChorus() {
+  ef_maxCursorLoc = 4;
+
+  display.fillScreen(BLACK);
+  display.setTextSize(2);
+  display.setTextColor(WHITE);
+  display.setCursor(0, 0);
+  display.print("<<< ");
+
+  // Chorus On/Off
+  if (ef_chorus_on) {
+    // Enable chorus and apply settings
+    int depth = pow(2, ef_chorus_depth) / 4;
+    float rate = pow(2, float(ef_chorus_rate)/2) / 8;
+    float mix = float(ef_chorus_mix) / 10;
+    chorusFlange.voices(256, depth, rate);
+    chorusMixer.gain(0, 1 - mix);
+    chorusMixer.gain(1, mix);
+
+    display.setTextColor(GREEN);
+  }
+  else {
+    chorusMixer.gain(0, 1);
+    chorusMixer.gain(1, 0);
+
+    display.setTextColor(GRAY);
+  }
+
+  display.println("Chorus");
+  display.setTextColor(WHITE);
+
+  display.println("Depth      " + String(ef_chorus_depth));
+  display.println("Rate       " + String(ef_chorus_rate));
+  display.println("Mix        " + String(ef_chorus_mix));
+
+  // Cursor on parameter value
+  display.setTextColor(BLUE);
+  if (ef_valueSelected) {
+    switch(ef_cursorLoc) {
+      case 2:
+        display.setCursor(132, 16);
+        display.print(String(ef_chorus_depth));
+        break;
+      case 3:
+        display.setCursor(132, 32);
+        display.print(ef_chorus_rate);
+        break;
+      case 4:
+        display.setCursor(132, 48);
+        display.print(ef_chorus_mix);
+        break;
+    }
+  }
+  // Cursor on parameter name
+  else {
+    switch(ef_cursorLoc) {
+      case 0:
+        display.setCursor(0, 0);
+        display.print("<<<");
+        break;
+      case 1:
+        if (ef_chorus_on) {
+          display.setTextColor(GREEN, WHITE);
+        }
+        else {
+          display.setTextColor(GRAY, WHITE);
+        }
+        display.setCursor(48, 0);
+        display.print("Chorus");
+        break;
+      case 2:
+        display.setCursor(0, 16);
+        display.print("Depth");
+        break;
+      case 3:
+        display.setCursor(0, 32);
+        display.print("Rate");
+        break;
+      case 4:
+        display.setCursor(0, 48);
+        display.print("Mix");
+        break;
+    }
+  }
+}
+
 
 void ef_drawTimeBased() {
   ef_maxCursorLoc = 2;
