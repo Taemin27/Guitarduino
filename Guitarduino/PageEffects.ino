@@ -154,6 +154,9 @@ int ef_fz_drive = 5;
 int ef_fz_level = 5;
 int ef_fz_tone = 5;
 
+#define EF_OD_LENGTH  4097
+float ef_od_shape[EF_OD_LENGTH];
+
 // Modulation effects variables
 bool ef_chorus_on = false;
 int ef_chorus_depth = 5;
@@ -488,8 +491,22 @@ void effects_loop() {
               }
 
               // FZ
-              else if (ef_drive_mode == 3) {
-
+              else if (ef_drive_mode == 2) {
+                if (ef_cursorLoc == 3) {
+                  if(ef_fz_drive < 10) {
+                    ef_fz_drive ++;
+                  }
+                }
+                else if (ef_cursorLoc == 4) {
+                  if(ef_fz_level < 10) {
+                    ef_fz_level ++;
+                  }
+                }
+                else if (ef_cursorLoc == 5) {
+                  if(ef_fz_tone < 10) {
+                    ef_fz_tone ++;
+                  }
+                }
               }
               break;
             
@@ -625,8 +642,25 @@ void effects_loop() {
               }
               
               // FZ
-              else if (ef_drive_mode == 3) {
-
+              else if (ef_drive_mode == 2) {
+                if (ef_cursorLoc == 2) {
+                  ef_drive_mode = 1;
+                }
+                else if (ef_cursorLoc == 3) {
+                  if(ef_fz_drive > 0) {
+                    ef_fz_drive --;
+                  }
+                }
+                else if (ef_cursorLoc == 4) {
+                  if(ef_fz_level > 0) {
+                    ef_fz_level --;
+                  }
+                }
+                else if (ef_cursorLoc == 5) {
+                  if(ef_fz_tone > 0) {
+                    ef_fz_tone --;
+                  }
+                }
               }
               break;
 
@@ -923,12 +957,13 @@ void ef_drawDrive() {
   if(ef_drive_mode == 0) {
     if(ef_drive_on) {
       // Enable OD and apply settings
-      ef_drive_disable();
 
       overdriveMixer.gain(0, 0);
       overdriveMixer.gain(1, 1);
-      overdriveGainAmp.gain((ef_od_drive * 2) + 3);
-      overdriveLevelAmp.gain(float(ef_od_level) / 50);
+      overdriveMixer.gain(2, 0);
+      generateODShape(ef_od_drive + 5);
+      overdriveWaveshape.shape(ef_od_shape, EF_OD_LENGTH);
+      overdriveLevelAmp.gain(float(ef_od_level) / 10);
       distortionGainAmp.gain(1);
       distortionLevelAmp.gain(1);
       overdriveBiquad.setLowpass(0, ef_od_tone * 1400 + 1000, 0.3);
@@ -951,13 +986,15 @@ void ef_drawDrive() {
   else if(ef_drive_mode == 1) {
     if(ef_drive_on) {
       // Enable DS and apply settings
-      ef_drive_disable();
+      //ef_drive_disable();
 
       overdriveMixer.gain(0, 0);
       overdriveMixer.gain(1, 1);
-      overdriveGainAmp.gain((ef_ds_drive * 2) + 3);
-      overdriveLevelAmp.gain(float(ef_ds_level) / 50);
-      distortionGainAmp.gain((ef_ds_drive * 2) + 3);
+      overdriveMixer.gain(2, 0);
+      generateODShape(ef_ds_drive + 5);
+      overdriveWaveshape.shape(ef_od_shape, EF_OD_LENGTH);
+      overdriveLevelAmp.gain(float(ef_ds_level) / 10);
+      distortionGainAmp.gain(float(ef_ds_drive) / 2);
       distortionLevelAmp.gain(float(ef_ds_level) / 50);
       overdriveBiquad.setLowpass(0, ef_ds_tone * 1400 + 1000, 0.3);
 
@@ -1073,10 +1110,24 @@ void ef_drive_disable() {
   overdriveMixer.gain(0, 1);
   overdriveMixer.gain(1, 0);
   overdriveMixer.gain(2, 0);
-  overdriveGainAmp.gain(0);
   overdriveLevelAmp.gain(0);
   distortionGainAmp.gain(0);
   distortionLevelAmp.gain(0);
+}
+
+void generateODShape(int drive) {
+  for (int i = 0; i < EF_OD_LENGTH; i++) {
+    float value = sin(((float)i/EF_OD_LENGTH - 0.45) * M_PI);
+    ef_od_shape[i] = value;
+  }
+  for (int i = 0; i < drive; i++) {
+    for(int j = 0; j < EF_OD_LENGTH; j++) {
+      ef_od_shape[j] = sin(ef_od_shape[j]);
+    }
+  }
+  for (int i  = 0; i < EF_OD_LENGTH; i++) {
+    ef_od_shape[i] = ef_od_shape[i] / ef_od_shape[EF_OD_LENGTH - 1];
+  }
 }
 
 void ef_drawModulation() {
@@ -1123,10 +1174,10 @@ void ef_drawChorus() {
   // Chorus On/Off
   if (ef_chorus_on) {
     // Enable chorus and apply settings
-    int depth = pow(2, ef_chorus_depth) / 4;
+    int depth = pow(2, ef_chorus_depth) / 2;
     float rate = pow(2, float(ef_chorus_rate)/2) / 8;
     float mix = float(ef_chorus_mix) / 10;
-    chorusFlange.voices(256, depth, rate);
+    chorusFlange.voices(512, depth, rate);
     chorusMixer.gain(0, 1 - mix);
     chorusMixer.gain(1, mix);
 

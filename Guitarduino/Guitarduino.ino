@@ -31,36 +31,36 @@
 #include <SerialFlash.h>
 
 // GUItool: begin automatically generated code
-AudioInputI2S            i2s1;           //xy=274.1999816894531,381
-AudioEffectGranular      granular1;      //xy=409.1999816894531,1031
-AudioAmplifier           notefreqAmp;    //xy=463.1999816894531,108
-AudioAnalyzeNoteFrequency notefreq1;      //xy=619.1999816894531,110
-AudioAmplifier           compressorAmp;  //xy=621.1999816894531,398
-AudioAnalyzePeak         compressorPeak; //xy=634.1999816894531,468
-AudioAmplifier           compressorLevelAmp; //xy=827.1999816894531,398
-AudioAnalyzePeak         peak2;          //xy=897.1999816894531,632
-AudioSynthWaveformDc     dc1;            //xy=1140.1999816894531,465
-AudioEffectWaveshaper    waveshape1;     //xy=1154.1999816894531,423
-AudioEffectWaveFolder    wavefolder1;    //xy=1338.1999816894531,450
-AudioMixer4              overdriveMixer; //xy=1341.1999816894531,396
-AudioAmplifier           distortionLevelAmp; //xy=1342.1999816894531,526
-AudioFilterBiquad        overdriveBiquad; //xy=1343.1999816894531,488
-AudioAmplifier           distortionGainAmp; //xy=1344.1999816894531,565
-AudioAmplifier           overdriveLevelAmp; //xy=1344.1999816894531,608
-AudioAmplifier           overdriveGainAmp; //xy=1348.1999816894531,648
-AudioEffectFlange        chorusFlange;        //xy=1665.1999816894531,436
-AudioMixer4              chorusMixer;    //xy=1839.2000427246094,417.99999237060547
-AudioAmplifier           delayAmp;       //xy=2077.199981689453,534
-AudioMixer4              delayMixer;     //xy=2134.199981689453,415
-AudioEffectDelay         delay1;         //xy=2211.199981689453,534
-AudioMixer4              reverbMixer;    //xy=2459.199981689453,414
-AudioEffectFreeverb      freeverb1;      //xy=2459.199981689453,465
-AudioAmplifier           reverbAmp;      //xy=2463.199981689453,503
-AudioPlaySdWav           playSdWav1;     //xy=2483.199981689453,236
-AudioSynthSimpleDrum     metronomeDrum;  //xy=2643.199981689453,340
-AudioMixer4              playSDMixer;    //xy=2698.199981689453,246
-AudioMixer4              masterMixer;    //xy=2981.199981689453,387
-AudioOutputI2S           i2s2;           //xy=3144.199981689453,381
+AudioInputI2S            i2s1;           //xy=1018.2000122070312,505
+AudioEffectGranular      granular1;      //xy=1153.2000122070312,1155
+AudioAmplifier           notefreqAmp;    //xy=1207.2000122070312,232
+AudioAnalyzeNoteFrequency notefreq1;      //xy=1363.2000122070312,234
+AudioAmplifier           compressorAmp;  //xy=1365.2000122070312,522
+AudioAnalyzePeak         compressorPeak; //xy=1378.2000122070312,592
+AudioAmplifier           compressorLevelAmp; //xy=1571.2000122070312,522
+AudioAnalyzePeak         peak2;          //xy=1641.2000122070312,756
+AudioEffectWaveshaper    waveshape1;     //xy=1898.2000122070312,547
+AudioMixer4              overdriveMixer; //xy=2085.2000122070312,520
+AudioAmplifier           distortionLevelAmp; //xy=2086.2000122070312,650
+AudioFilterBiquad        overdriveBiquad; //xy=2087.2000122070312,612
+AudioAmplifier           distortionGainAmp; //xy=2088.2000122070312,689
+AudioAmplifier           overdriveLevelAmp; //xy=2088.2000122070312,732
+AudioEffectWaveshaper    overdriveWaveshape; //xy=2092.2000122070312,777
+AudioEffectFlange        chorusFlange;   //xy=2409.2000122070312,560
+AudioMixer4              chorusMixer;    //xy=2583.2000122070312,541
+AudioAmplifier           delayAmp;       //xy=2821.2000122070312,658
+AudioMixer4              delayMixer;     //xy=2878.2000122070312,539
+AudioEffectDelay         delay1;         //xy=2955.2000122070312,658
+AudioMixer4              reverbMixer;    //xy=3203.2000122070312,538
+AudioEffectFreeverb      freeverb1;      //xy=3203.2000122070312,589
+AudioAmplifier           reverbAmp;      //xy=3207.2000122070312,627
+AudioPlaySdWav           playSdWav1;     //xy=3227.2000122070312,360
+AudioSynthSimpleDrum     metronomeDrum;  //xy=3387.2000122070312,464
+AudioMixer4              playSDMixer;    //xy=3442.2000122070312,370
+AudioInputUSB            usb1;           //xy=3519.2000045776367,239.20001602172852
+AudioMixer4              usbMixer;         //xy=3687.200008392334,257.20000076293945
+AudioMixer4              masterMixer;    //xy=3725.2000122070312,511
+AudioOutputI2S           i2s2;           //xy=3888.2000122070312,505
 AudioConnection          patchCord1(i2s1, 0, notefreqAmp, 0);
 AudioConnection          patchCord2(i2s1, 0, compressorAmp, 0);
 AudioConnection          patchCord3(i2s1, 0, compressorPeak, 0);
@@ -68,34 +68,35 @@ AudioConnection          patchCord4(notefreqAmp, notefreq1);
 AudioConnection          patchCord5(compressorAmp, compressorLevelAmp);
 AudioConnection          patchCord6(compressorLevelAmp, waveshape1);
 AudioConnection          patchCord7(compressorLevelAmp, 0, overdriveMixer, 0);
-AudioConnection          patchCord8(compressorLevelAmp, overdriveGainAmp);
-AudioConnection          patchCord9(compressorLevelAmp, peak2);
-AudioConnection          patchCord10(dc1, 0, wavefolder1, 1);
-AudioConnection          patchCord11(waveshape1, 0, overdriveMixer, 2);
-AudioConnection          patchCord12(wavefolder1, 0, overdriveMixer, 1);
-AudioConnection          patchCord13(overdriveMixer, chorusFlange);
-AudioConnection          patchCord14(overdriveMixer, 0, chorusMixer, 0);
-AudioConnection          patchCord15(distortionLevelAmp, overdriveBiquad);
-AudioConnection          patchCord16(overdriveBiquad, 0, wavefolder1, 0);
-AudioConnection          patchCord17(distortionGainAmp, distortionLevelAmp);
-AudioConnection          patchCord18(overdriveLevelAmp, distortionGainAmp);
-AudioConnection          patchCord19(overdriveGainAmp, overdriveLevelAmp);
-AudioConnection          patchCord20(chorusFlange, 0, chorusMixer, 1);
-AudioConnection          patchCord21(chorusMixer, 0, delayMixer, 0);
-AudioConnection          patchCord22(delayAmp, delay1);
-AudioConnection          patchCord23(delayMixer, 0, reverbMixer, 0);
-AudioConnection          patchCord24(delayMixer, reverbAmp);
-AudioConnection          patchCord25(delayMixer, delayAmp);
-AudioConnection          patchCord26(delay1, 0, delayMixer, 1);
-AudioConnection          patchCord27(reverbMixer, 0, masterMixer, 3);
-AudioConnection          patchCord28(freeverb1, 0, reverbMixer, 1);
-AudioConnection          patchCord29(reverbAmp, freeverb1);
-AudioConnection          patchCord30(playSdWav1, 0, playSDMixer, 0);
-AudioConnection          patchCord31(playSdWav1, 1, playSDMixer, 1);
-AudioConnection          patchCord32(metronomeDrum, 0, masterMixer, 2);
-AudioConnection          patchCord33(playSDMixer, 0, masterMixer, 1);
-AudioConnection          patchCord34(masterMixer, 0, i2s2, 0);
-AudioControlSGTL5000     sgtl5000_1;     //xy=240.19998168945312,296
+AudioConnection          patchCord8(compressorLevelAmp, peak2);
+AudioConnection          patchCord9(compressorLevelAmp, overdriveWaveshape);
+AudioConnection          patchCord10(waveshape1, 0, overdriveMixer, 2);
+AudioConnection          patchCord11(overdriveMixer, chorusFlange);
+AudioConnection          patchCord12(overdriveMixer, 0, chorusMixer, 0);
+AudioConnection          patchCord13(distortionLevelAmp, overdriveBiquad);
+AudioConnection          patchCord14(overdriveBiquad, 0, overdriveMixer, 1);
+AudioConnection          patchCord15(distortionGainAmp, distortionLevelAmp);
+AudioConnection          patchCord16(overdriveLevelAmp, distortionGainAmp);
+AudioConnection          patchCord17(overdriveWaveshape, overdriveLevelAmp);
+AudioConnection          patchCord18(chorusFlange, 0, chorusMixer, 1);
+AudioConnection          patchCord19(chorusMixer, 0, delayMixer, 0);
+AudioConnection          patchCord20(delayAmp, delay1);
+AudioConnection          patchCord21(delayMixer, 0, reverbMixer, 0);
+AudioConnection          patchCord22(delayMixer, reverbAmp);
+AudioConnection          patchCord23(delayMixer, delayAmp);
+AudioConnection          patchCord24(delay1, 0, delayMixer, 1);
+AudioConnection          patchCord25(reverbMixer, 0, masterMixer, 3);
+AudioConnection          patchCord26(freeverb1, 0, reverbMixer, 1);
+AudioConnection          patchCord27(reverbAmp, freeverb1);
+AudioConnection          patchCord28(playSdWav1, 0, playSDMixer, 0);
+AudioConnection          patchCord29(playSdWav1, 1, playSDMixer, 1);
+AudioConnection          patchCord30(metronomeDrum, 0, masterMixer, 2);
+AudioConnection          patchCord31(playSDMixer, 0, masterMixer, 1);
+AudioConnection          patchCord32(usb1, 0, usbMixer, 0);
+AudioConnection          patchCord33(usb1, 1, usbMixer, 1);
+AudioConnection          patchCord34(usbMixer, 0, masterMixer, 0);
+AudioConnection          patchCord35(masterMixer, 0, i2s2, 0);
+AudioControlSGTL5000     sgtl5000_1;     //xy=984.2000122070312,420
 // GUItool: end automatically generated code
 
 
@@ -139,7 +140,7 @@ const float ef_compressor_thresholdMax = 0.5;  //Adjust if needed (use compresso
 const float ef_compressor_ratio = 0.125;
 
 // Chorus
-#define CHORUS_DELAY_LENGTH (8*AUDIO_BLOCK_SAMPLES)
+#define CHORUS_DELAY_LENGTH (16*AUDIO_BLOCK_SAMPLES)
 short delayline[CHORUS_DELAY_LENGTH];
 
 // Metronome global variables
@@ -173,8 +174,12 @@ void setup() {
   display.setRotation(3);
   display.invertDisplay(false);
   display.drawBitmap(0, 0, Boot, 160, 80, BOOT);
+  display.setTextSize(1);
+  display.setTextColor(WHITE);
+  display.setCursor(62, 47);
+  display.print("Ver:Development");
   display.display();
-  delay(500);
+  delay(1000);
 
 
   /* Audio */
@@ -216,7 +221,6 @@ void setup() {
   compressorLevelAmp.gain(1);
 
   //Drive
-  dc1.amplitude(0.1);
   waveshape1.shape(fuzzWaveshape, 3);
   ef_drive_disable();
 
@@ -267,6 +271,9 @@ int previousMemoryUsage = 0;
 
 void loop() {
   printAudioMemoryUsage();
+  float requestedVolume = usb1.volume();
+  usbMixer.gain(0, requestedVolume);
+  usbMixer.gain(1, requestedVolume);
   switch (currentPage) {
     case 0:
       page0_loop();
