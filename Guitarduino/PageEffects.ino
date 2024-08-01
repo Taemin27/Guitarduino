@@ -145,17 +145,20 @@ bool ef_valueSelected = false;
 bool ef_drive_on = false;
 int ef_drive_mode = 0;    // 0: Overdrive, 1: Distortion, 2: Fuzz
 int ef_od_drive = 5;
-int ef_od_level = 5;
-int ef_od_tone = 5;
+int ef_od_level = 10;
+int ef_od_tone = 7;
 int ef_ds_drive = 5;
-int ef_ds_level = 5;
-int ef_ds_tone = 5;
+int ef_ds_level = 10;
+int ef_ds_tone = 7;
 int ef_fz_drive = 5;
-int ef_fz_level = 5;
-int ef_fz_tone = 5;
+int ef_fz_level = 10;
+int ef_fz_tone = 7;
 
-#define EF_OD_LENGTH  4097
+#define EF_OD_LENGTH  1025
 float ef_od_shape[EF_OD_LENGTH];
+
+#define EF_DS_LENGTH 129
+float ef_ds_shape[EF_OD_LENGTH];
 
 // Modulation effects variables
 bool ef_chorus_on = false;
@@ -312,7 +315,7 @@ void effects_loop() {
         switch(ef_cursorLoc) {
           case 0:
             ef_currentPage = typeMenu;
-            ef_cursorLoc = 0;
+            ef_cursorLoc = 5;
             ef_drawTypeMenu();
             display.display();
             break;
@@ -957,21 +960,24 @@ void ef_drawDrive() {
   if(ef_drive_mode == 0) {
     if(ef_drive_on) {
       // Enable OD and apply settings
-
-      overdriveMixer.gain(0, 0);
-      overdriveMixer.gain(1, 1);
-      overdriveMixer.gain(2, 0);
-      generateODShape(ef_od_drive + 5);
+      generateODShape(ef_od_drive);
       overdriveWaveshape.shape(ef_od_shape, EF_OD_LENGTH);
       overdriveLevelAmp.gain(float(ef_od_level) / 10);
-      distortionGainAmp.gain(1);
-      distortionLevelAmp.gain(1);
-      overdriveBiquad.setLowpass(0, ef_od_tone * 1400 + 1000, 0.3);
+      driveBiquad.setLowpass(0, ef_od_tone * 1400 + 1000, 0.3);
+
+      overdriveFirstAmp.gain(1);
+
+      driveMixer.gain(0, 1);
+      driveMixer.gain(1, 0);
+      driveMixer.gain(2, 0);
+
+      driveOnOffMixer.gain(0, 0);
+      driveOnOffMixer.gain(1, 1);
 
       display.setTextColor(GREEN);
     }
     else {
-      ef_drive_disable();
+      disableDrive();
 
       display.setTextColor(GRAY);
     }
@@ -986,22 +992,24 @@ void ef_drawDrive() {
   else if(ef_drive_mode == 1) {
     if(ef_drive_on) {
       // Enable DS and apply settings
-      //ef_drive_disable();
+      generateDSShape(ef_ds_drive);
+      distortionWaveshape.shape(ef_ds_shape, EF_DS_LENGTH);
+      distortionLevelAmp.gain(float(ef_ds_level) / 10);
+      driveBiquad.setLowpass(0, ef_ds_tone * 1400 + 1000, 0.3);
 
-      overdriveMixer.gain(0, 0);
-      overdriveMixer.gain(1, 1);
-      overdriveMixer.gain(2, 0);
-      generateODShape(ef_ds_drive + 5);
-      overdriveWaveshape.shape(ef_od_shape, EF_OD_LENGTH);
-      overdriveLevelAmp.gain(float(ef_ds_level) / 10);
-      distortionGainAmp.gain(float(ef_ds_drive) / 2);
-      distortionLevelAmp.gain(float(ef_ds_level) / 50);
-      overdriveBiquad.setLowpass(0, ef_ds_tone * 1400 + 1000, 0.3);
+      overdriveFirstAmp.gain(1);
+      distortionFirstAmp.gain(1);
+
+      driveMixer.gain(1, 1);
+      driveMixer.gain(2, 0);
+
+      driveOnOffMixer.gain(0, 0);
+      driveOnOffMixer.gain(1, 1);
 
       display.setTextColor(GREEN);
     }
     else {
-      ef_drive_disable();
+      disableDrive();
 
       display.setTextColor(GRAY);
     }
@@ -1015,18 +1023,13 @@ void ef_drawDrive() {
   // Fuzz
   else if(ef_drive_mode == 2) {
     if(ef_drive_on) {
-      // Enable DS and apply settings
-      ef_drive_disable();
-
-      overdriveMixer.gain(0, 0);
-      overdriveMixer.gain(1, 0);
-      overdriveMixer.gain(2, 1);
+      // Enable FZ and apply settings
       
 
       display.setTextColor(GREEN);
     }
     else {
-      ef_drive_disable();
+      disableDrive();
 
       display.setTextColor(GRAY);
     }
@@ -1106,18 +1109,16 @@ void ef_drawDrive() {
   }
 }
 
-void ef_drive_disable() {
-  overdriveMixer.gain(0, 1);
-  overdriveMixer.gain(1, 0);
-  overdriveMixer.gain(2, 0);
-  overdriveLevelAmp.gain(0);
-  distortionGainAmp.gain(0);
-  distortionLevelAmp.gain(0);
+void disableDrive() {
+  overdriveFirstAmp.gain(0);
+  distortionFirstAmp.gain(0);
+  driveOnOffMixer.gain(0, 1);
+  driveOnOffMixer.gain(1, 0);
 }
 
 void generateODShape(int drive) {
   for (int i = 0; i < EF_OD_LENGTH; i++) {
-    float value = sin(((float)i/EF_OD_LENGTH - 0.45) * M_PI);
+    float value = sin((float(i)/EF_OD_LENGTH - 0.5) * M_PI);
     ef_od_shape[i] = value;
   }
   for (int i = 0; i < drive; i++) {
@@ -1127,6 +1128,24 @@ void generateODShape(int drive) {
   }
   for (int i  = 0; i < EF_OD_LENGTH; i++) {
     ef_od_shape[i] = ef_od_shape[i] / ef_od_shape[EF_OD_LENGTH - 1];
+  }
+}
+
+void generateDSShape(int drive) {
+  int i;
+  for (i = 0; i < EF_DS_LENGTH * 0.5; i++) {
+    float value = float(i) / EF_DS_LENGTH - float(drive) / 70;
+    if (value < -1) {
+      value = -1;
+    }
+    ef_ds_shape[i] = value;
+  }
+  for (i = i; i < EF_DS_LENGTH; i++) {
+    float value = float(i) / EF_DS_LENGTH + float(drive) / 70;
+    if (value > 1) {
+      value = 1;
+    }
+    ef_ds_shape[i] = value;
   }
 }
 
