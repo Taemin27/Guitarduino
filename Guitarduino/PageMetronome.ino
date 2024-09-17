@@ -107,6 +107,7 @@ const unsigned char metronomeHome [] PROGMEM = {
 
 int metronome_cursorLoc = 0;
 bool metronome_valueSelected = false;
+int metronome_volume = 10;
 
 
 void metronome_setup() {
@@ -129,7 +130,7 @@ void metronome_loop() {
           pageSelected = false;
           metronome_setup();
           break;
-        case 3:
+        case 1:
           metronome_on = !metronome_on;
           metronome_refresh();
           break;
@@ -153,12 +154,17 @@ void metronome_loop() {
       if(encoder == 1) {
         if(metronome_valueSelected) {
           switch(metronome_cursorLoc) {
-            case 1:
+            case 2:
+              if(metronome_volume < 20) {
+                metronome_volume ++;
+              }
+              break;
+            case 3:
               if(metronome_beatsPerBar < 16) {
                 metronome_beatsPerBar ++;
               }
               break;
-            case 2:
+            case 4:
               if(metronome_bpm < 600) {
                 metronome_bpm ++;
               }
@@ -166,7 +172,7 @@ void metronome_loop() {
           }
         }
         else {
-          if(metronome_cursorLoc < 3) {
+          if(metronome_cursorLoc < 4) {
             metronome_cursorLoc ++;
           }
         }
@@ -176,12 +182,17 @@ void metronome_loop() {
       else if(encoder == -1) {
         if(metronome_valueSelected) {
           switch(metronome_cursorLoc) {
-            case 1:
+            case 2:
+              if(metronome_volume > 0) {
+                metronome_volume --;
+              }
+              break;
+            case 3:
               if(metronome_beatsPerBar > 1) {
                 metronome_beatsPerBar --;
               }
               break;
-            case 2:
+            case 4:
               if(metronome_bpm > 10) {
                 metronome_bpm --;
               }
@@ -201,6 +212,8 @@ void metronome_loop() {
 }
 
 void metronome_refresh() {
+  masterMixer.gain(2, float(metronome_volume) / 5);
+
   // UI
   display.fillScreen(BLACK);
   display.setTextColor(WHITE, BLACK);
@@ -209,19 +222,23 @@ void metronome_refresh() {
   display.setCursor(0, 0);
   display.print("<<<");
 
-  display.setCursor(6, 50);
+  display.setCursor(6, 72);
   display.print("Beats/Bar: " + String(metronome_beatsPerBar) + " ");
 
-  display.setCursor(106, 50);
+  display.setCursor(106, 72);
   display.print("BPM: " + String(metronome_bpm) + " ");
 
   if (metronome_on) {
-    display.fillRect(73, 63, 4, 16, WHITE);
-    display.fillRect(82, 63, 4, 16, WHITE);
+    display.fillRect(73, 50, 4, 16, WHITE);
+    display.fillRect(82, 50, 4, 16, WHITE);
   }
   else {
-    display.fillTriangle(72, 63, 72, 79, 87, 71, WHITE);
+    display.fillTriangle(72, 50, 72, 66, 87, 58, WHITE);
   }
+
+  display.drawBitmap(120, 52, Volume, 14, 12, WHITE);
+  display.setCursor(140, 54);
+  display.print(String(metronome_volume) + " ");
 
   // Selection highlight
   display.setTextColor(BLUE, BLACK);
@@ -231,35 +248,44 @@ void metronome_refresh() {
       display.print("<<<");
       break;
     case 1:
+      if (metronome_on) {
+        display.fillRect(73, 50, 4, 16, BLUE);
+        display.fillRect(82, 50, 4, 16, BLUE);
+      }
+      else {
+        display.fillTriangle(72, 50, 72, 66, 87, 58, BLUE);
+      }
+      break;
+    case 2:
       if(metronome_valueSelected) {
-        display.setCursor(72, 50);
+        display.setCursor(140, 54);
+        display.print(String(metronome_volume) + " ");
+      }
+      else {
+        display.drawBitmap(120, 52, Volume, 14, 12, BLUE);
+      }
+      break;
+    case 3:
+      if(metronome_valueSelected) {
+        display.setCursor(72, 72);
         display.print(String(metronome_beatsPerBar) + " ");
       }
       else {
-        display.setCursor(6, 50);
+        display.setCursor(6, 72);
         display.print("Beats/Bar: ");
       }
 
       break;
-    case 2:
+    case 4:
       if(metronome_valueSelected) {
-        display.setCursor(136, 50);
+        display.setCursor(136, 72);
         display.print(String(metronome_bpm) + " ");
       }
       else {
-        display.setCursor(106, 50);
+        display.setCursor(106, 72);
         display.print("BPM: ");
       }
 
-      break;
-    case 3:
-      if (metronome_on) {
-        display.fillRect(73, 63, 4, 16, BLUE);
-        display.fillRect(82, 63, 4, 16, BLUE);
-      }
-      else {
-        display.fillTriangle(72, 63, 72, 79, 87, 71, BLUE);
-      }
       break;
   }
 

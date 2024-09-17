@@ -963,7 +963,7 @@ void ef_drawDrive() {
       generateODShape(ef_od_drive);
       overdriveWaveshape.shape(ef_od_shape, EF_OD_LENGTH);
       overdriveLevelAmp.gain(float(ef_od_level) / 10);
-      driveBiquad.setLowpass(0, ef_od_tone * 1400 + 1000, 0.3);
+      driveBiquad.setLowpass(0, ef_od_tone * 1600 + 1000, 0.3);
 
       overdriveFirstAmp.gain(1);
 
@@ -995,7 +995,7 @@ void ef_drawDrive() {
       generateDSShape(ef_ds_drive);
       distortionWaveshape.shape(ef_ds_shape, EF_DS_LENGTH);
       distortionLevelAmp.gain(float(ef_ds_level) / 10);
-      driveBiquad.setLowpass(0, ef_ds_tone * 1400 + 1000, 0.3);
+      driveBiquad.setLowpass(0, ef_ds_tone * 1600 + 1000, 0.3);
 
       overdriveFirstAmp.gain(1);
       distortionFirstAmp.gain(1);
@@ -1121,7 +1121,7 @@ void generateODShape(int drive) {
     float value = sin((float(i)/EF_OD_LENGTH - 0.5) * M_PI);
     ef_od_shape[i] = value;
   }
-  for (int i = 0; i < drive; i++) {
+  for (int i = 1; i < drive; i++) {
     for(int j = 0; j < EF_OD_LENGTH; j++) {
       ef_od_shape[j] = sin(ef_od_shape[j]);
     }

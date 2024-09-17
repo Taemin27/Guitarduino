@@ -128,6 +128,7 @@ void tuner_loop() {
   if(bounce.changed() && bounce.read() == LOW) {
     if(!pageSelected) {
       pageSelected = true;
+      masterMixer.gain(3, 0);
       notefreqAmp.gain(1);
       display.fillScreen(BLACK);
       display.display();
@@ -136,6 +137,7 @@ void tuner_loop() {
       pageSelected = false;
       notefreqAmp.gain(0);
       tuner_setup();
+      masterMixer.gain(3, 1);
     }
   }
 

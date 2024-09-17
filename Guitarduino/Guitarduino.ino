@@ -31,39 +31,39 @@
 #include <SerialFlash.h>
 
 // GUItool: begin automatically generated code
-AudioInputI2S            i2s1;           //xy=965.200023651123,520.0000228881836
-AudioEffectGranular      granular1;      //xy=1093.1999969482422,1153
-AudioAmplifier           notefreqAmp;    //xy=1147.1999969482422,230
-AudioAmplifier           compressorAmp;  //xy=1242.2000350952148,524.0000152587891
-AudioAnalyzePeak         compressorPeak; //xy=1255.2000350952148,594.0000152587891
-AudioAnalyzeNoteFrequency notefreq1;      //xy=1303.1999969482422,232
-AudioAmplifier           compressorLevelAmp; //xy=1448.2000350952148,524.0000152587891
-AudioAnalyzePeak         peak2;          //xy=1518.2000350952148,758.0000152587891
-AudioAmplifier           distortionFirstAmp;           //xy=1902.8000755310059,738.2000312805176
-AudioEffectWaveshaper    distortionWaveshape;     //xy=1905.8001823425293,782.200065612793
-AudioAmplifier           distortionLevelAmp; //xy=1908.2002067565918,822.0000524520874
-AudioEffectWaveshaper    overdriveWaveshape; //xy=1910.2001037597656,613.0001420974731
-AudioEffectWaveshaper    fuzzWaveShape;     //xy=1913.8001823425293,905.2000665664673
-AudioAmplifier           overdriveLevelAmp; //xy=1915.2001037597656,654.0001430511475
-AudioAmplifier           overdriveFirstAmp; //xy=1916.2002258300781,574.0001382827759
-AudioMixer4              driveMixer;         //xy=2143.6998596191406,654.200029373169
-AudioFilterBiquad        driveBiquad; //xy=2300.449863433838,632.5001392364502
-AudioMixer4              driveOnOffMixer; //xy=2507.450107574463,536.0000762939453
-AudioEffectFlange        chorusFlange;   //xy=2938.449935913086,590.5001678466797
-AudioMixer4              chorusMixer;    //xy=3144.449935913086,563.5000762939453
-AudioAmplifier           delayAmp;       //xy=3292.450065612793,703.5000534057617
-AudioMixer4              delayMixer;     //xy=3349.450065612793,584.5000534057617
-AudioEffectDelay         delay1;         //xy=3426.450065612793,703.5000534057617
-AudioMixer4              reverbMixer;    //xy=3674.450065612793,583.5000534057617
-AudioEffectFreeverb      freeverb1;      //xy=3674.450065612793,634.5000534057617
-AudioAmplifier           reverbAmp;      //xy=3678.450065612793,672.5000534057617
-AudioPlaySdWav           playSdWav1;     //xy=3698.450065612793,405.5000534057617
-AudioSynthSimpleDrum     metronomeDrum;  //xy=3858.450065612793,509.5000534057617
-AudioMixer4              playSDMixer;    //xy=3913.450065612793,415.5000534057617
-AudioInputUSB            usb1;           //xy=3990.450065612793,284.5000534057617
-AudioMixer4              usbMixer;       //xy=4158.450065612793,302.5000534057617
-AudioMixer4              masterMixer;    //xy=4196.450065612793,556.5000534057617
-AudioOutputI2S           i2s2;           //xy=4359.450065612793,550.5000534057617
+AudioInputI2S            i2s1;           //xy=307.1999816894531,581.9999847412109
+AudioEffectGranular      granular1;      //xy=435.1999816894531,1214.999984741211
+AudioAmplifier           notefreqAmp;    //xy=489.1999816894531,291.99998474121094
+AudioAmplifier           compressorAmp;  //xy=584.1999816894531,585.9999847412109
+AudioAnalyzePeak         compressorPeak; //xy=597.1999816894531,655.9999847412109
+AudioAnalyzeNoteFrequency notefreq1;      //xy=645.1999816894531,293.99998474121094
+AudioAmplifier           compressorLevelAmp; //xy=790.1999816894531,585.9999847412109
+AudioAnalyzePeak         peak2;          //xy=860.1999816894531,819.9999847412109
+AudioAmplifier           distortionFirstAmp; //xy=1244.1999816894531,799.9999847412109
+AudioEffectWaveshaper    distortionWaveshape; //xy=1247.1999816894531,843.9999847412109
+AudioAmplifier           distortionLevelAmp; //xy=1250.1999816894531,883.9999847412109
+AudioEffectWaveshaper    overdriveWaveshape; //xy=1252.1999816894531,674.9999847412109
+AudioEffectWaveshaper    fuzzWaveShape;  //xy=1255.1999816894531,966.9999847412109
+AudioAmplifier           overdriveLevelAmp; //xy=1257.1999816894531,715.9999847412109
+AudioAmplifier           overdriveFirstAmp; //xy=1258.1999816894531,635.9999847412109
+AudioMixer4              driveMixer;     //xy=1485.1999816894531,715.9999847412109
+AudioFilterBiquad        driveBiquad;    //xy=1642.1999816894531,693.9999847412109
+AudioMixer4              driveOnOffMixer; //xy=1849.1999816894531,597.9999847412109
+AudioEffectFlange        chorusFlange;   //xy=2280.199981689453,651.9999847412109
+AudioMixer4              chorusMixer;    //xy=2486.199981689453,624.9999847412109
+AudioAmplifier           delayAmp;       //xy=2634.199981689453,764.9999847412109
+AudioMixer4              delayMixer;     //xy=2691.199981689453,645.9999847412109
+AudioEffectDelay         delay1;         //xy=2768.199981689453,764.9999847412109
+AudioMixer4              reverbMixer;    //xy=3016.199981689453,644.9999847412109
+AudioEffectFreeverb      freeverb1;      //xy=3016.199981689453,695.9999847412109
+AudioAmplifier           reverbAmp;      //xy=3020.199981689453,733.9999847412109
+AudioPlaySdWav           playSdWav1;     //xy=3040.199981689453,466.99998474121094
+AudioSynthSimpleDrum     metronomeDrum;  //xy=3200.199981689453,570.9999847412109
+AudioMixer4              playSDMixer;    //xy=3255.199981689453,476.99998474121094
+AudioInputUSB            usb1;           //xy=3332.199981689453,345.99998474121094
+AudioMixer4              usbMixer;       //xy=3500.199981689453,363.99998474121094
+AudioMixer4              masterMixer;    //xy=3538.199981689453,617.9999847412109
+AudioOutputI2S           i2s2;           //xy=3701.199981689453,611.9999847412109
 AudioConnection          patchCord1(i2s1, 0, compressorAmp, 0);
 AudioConnection          patchCord2(i2s1, 0, notefreqAmp, 0);
 AudioConnection          patchCord3(i2s1, 0, compressorPeak, 0);
@@ -103,10 +103,9 @@ AudioConnection          patchCord36(usb1, 0, usbMixer, 0);
 AudioConnection          patchCord37(usb1, 1, usbMixer, 1);
 AudioConnection          patchCord38(usbMixer, 0, masterMixer, 0);
 AudioConnection          patchCord39(masterMixer, 0, i2s2, 0);
-AudioControlSGTL5000     sgtl5000_1;     //xy=924.1999969482422,418
+AudioConnection          patchCord40(masterMixer, 0, i2s2, 1);
+AudioControlSGTL5000     sgtl5000_1;     //xy=266.1999816894531,479.99998474121094
 // GUItool: end automatically generated code
-
-
 
 
 
@@ -191,18 +190,18 @@ void setup() {
 
 
   /* Audio */
-  AudioMemory(100);
+  AudioMemory(1000);
 
   sgtl5000_1.enable();
   sgtl5000_1.inputSelect(AUDIO_INPUT_LINEIN);
-  sgtl5000_1.lineInLevel(13);
+  sgtl5000_1.lineInLevel(10);
   sgtl5000_1.volume(1);
   //sgtl5000_1.adcHighPassFilterDisable();
 
   masterMixer.gain(0, 1);
   masterMixer.gain(1, 1);
-  masterMixer.gain(2, 1);
-  masterMixer.gain(3, 1);
+  masterMixer.gain(2, 0);
+  masterMixer.gain(3, 0.5);
 
 
   /* SD */
